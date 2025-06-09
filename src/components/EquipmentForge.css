@@ -1,0 +1,197 @@
+.equipment-forge {
+  background: linear-gradient(135deg, #2c1810, #4a2c20);
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.equipment-forge h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #ff6b35;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-size: 2em;
+}
+
+.forge-area {
+  margin-bottom: 30px;
+}
+
+.forge-button-container {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.forge-button {
+  background: linear-gradient(45deg, #ff6b35, #ff8c42);
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+  transition: all 0.3s ease;
+  min-width: 250px;
+}
+
+.forge-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+}
+
+.forge-button:disabled {
+  background: #666;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.forge-button.forging {
+  animation: forge-glow 1s ease-in-out infinite alternate;
+}
+
+@keyframes forge-glow {
+  from {
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+  }
+  to {
+    box-shadow: 0 4px 25px rgba(255, 107, 53, 0.8);
+  }
+}
+
+.spinner {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cost {
+  display: block;
+  font-size: 0.9em;
+  opacity: 0.8;
+  margin-top: 5px;
+}
+
+.last-forged {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.last-forged h3 {
+  margin: 0 0 15px 0;
+  color: #ffeb3b;
+  text-align: center;
+}
+
+.equipment-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid;
+  border-radius: 10px;
+  padding: 15px;
+  backdrop-filter: blur(5px);
+}
+
+.equipment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.equipment-emoji {
+  font-size: 1.5em;
+  margin-right: 10px;
+}
+
+.equipment-name {
+  flex: 1;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.rarity-badge {
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.9em;
+}
+
+.equipment-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  font-size: 0.9em;
+}
+
+.stat-name {
+  text-transform: capitalize;
+}
+
+.stat-value {
+  font-weight: bold;
+  color: #4caf50;
+}
+
+.equipment-value {
+  text-align: center;
+  font-weight: bold;
+  color: #ffd700;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 10px;
+}
+
+.rarity-info {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.rarity-info h3 {
+  margin: 0 0 15px 0;
+  text-align: center;
+  color: #e0e0e0;
+}
+
+.rarity-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.rarity-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 0.9em;
+}
+
+.rarity-chance {
+  font-weight: bold;
+}

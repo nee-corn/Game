@@ -1,0 +1,114 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e);
+  min-height: 100vh;
+  color: #ffffff;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  background: linear-gradient(45deg, #2c3e50, #34495e);
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid #3498db;
+}
+
+.app-header h1 {
+  color: #ecf0f1;
+  font-size: 2.5em;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  margin: 0;
+}
+
+.gold-display {
+  background: linear-gradient(45deg, #f39c12, #e67e22);
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-size: 1.3em;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.app-main {
+  flex: 1;
+  padding: 30px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .app-main {
+    grid-template-columns: 1fr;
+    padding: 20px;
+    gap: 20px;
+  }
+
+  .app-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .app-header h1 {
+    font-size: 2em;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-main {
+    padding: 15px;
+  }
+
+  .app-header {
+    padding: 15px;
+  }
+
+  .app-header h1 {
+    font-size: 1.8em;
+  }
+
+  .gold-display {
+    font-size: 1.1em;
+    padding: 10px 16px;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #2980b9, #3498db);
+}
