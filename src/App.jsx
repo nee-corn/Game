@@ -1,6 +1,8 @@
 import { useState } from "react";
 import EquipmentForge from "./components/EquipmentForge";
 import Inventory from "./components/Inventory";
+import Combat from "./components/Combat";
+import Dungeon from "./components/Dungeon";
 import "./App.css";
 
 function App() {
@@ -10,6 +12,10 @@ function App() {
 
   const addToInventory = (equipment) => {
     setInventory((prev) => [...prev, equipment]);
+  };
+
+  const handleEquipmentFound = (equipment) => {
+    addToInventory(equipment);
   };
 
   const sellEquipment = (item, isEquipped = false) => {
@@ -69,6 +75,13 @@ function App() {
           onEquipmentForged={addToInventory}
           gold={gold}
           setGold={setGold}
+        />
+        <Combat equippedItems={equippedItems} gold={gold} setGold={setGold} />
+        <Dungeon
+          equippedItems={equippedItems}
+          gold={gold}
+          setGold={setGold}
+          onEquipmentFound={handleEquipmentFound}
         />
         <Inventory
           items={inventory}

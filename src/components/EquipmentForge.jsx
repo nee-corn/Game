@@ -35,6 +35,14 @@ const RARITIES = {
     cost: 100,
     emoji: "🟠",
   },
+  MYTHIC: {
+    name: "Mythique",
+    color: "#ff0080",
+    chance: 0, // Uniquement obtenu dans les donjons
+    statMultiplier: 6,
+    cost: 0,
+    emoji: "💖",
+  },
 };
 
 // Types d'équipements
@@ -44,24 +52,28 @@ const EQUIPMENT_TYPES = {
     emoji: "⚔️",
     primaryStat: "attaque",
     stats: ["attaque", "critique"],
+    bonusStats: ["luck"], // Stats bonus possibles
   },
   ARMOR: {
     name: "Armure",
     emoji: "🛡️",
     primaryStat: "défense",
     stats: ["défense", "vie"],
+    bonusStats: ["luck"],
   },
   HELMET: {
     name: "Casque",
     emoji: "⛑️",
     primaryStat: "défense",
     stats: ["défense", "mana"],
+    bonusStats: ["luck"],
   },
   BOOTS: {
     name: "Bottes",
     emoji: "👢",
     primaryStat: "agilité",
     stats: ["agilité", "esquive"],
+    bonusStats: ["luck"],
   },
 };
 
@@ -81,7 +93,6 @@ function EquipmentForge({ onEquipmentForged, gold, setGold }) {
     }
     return { key: "COMMON", ...RARITIES.COMMON };
   };
-
   const generateStats = (equipmentType, rarity) => {
     const stats = {};
     const baseStats = {
@@ -92,8 +103,10 @@ function EquipmentForge({ onEquipmentForged, gold, setGold }) {
       agilité: { min: 2, max: 8 },
       critique: { min: 1, max: 5 },
       esquive: { min: 1, max: 4 },
+      luck: { min: 1, max: 3 },
     };
 
+    // Génère les stats de base
     equipmentType.stats.forEach((statName) => {
       const baseStat = baseStats[statName];
       const baseValue =
@@ -101,6 +114,31 @@ function EquipmentForge({ onEquipmentForged, gold, setGold }) {
         baseStat.min;
       stats[statName] = Math.floor(baseValue * rarity.statMultiplier);
     });
+
+    // Chance d'obtenir des stats bonus (luck) selon la rareté
+    const bonusChance = {
+      COMMON: 5,
+      RARE: 15,
+      EPIC: 30,
+      LEGENDARY: 50,
+      MYTHIC: 100,
+    };
+
+    if (
+      equipmentType.bonusStats &&
+      Math.random() * 100 < bonusChance[rarity.key]
+    ) {
+      equipmentType.bonusStats.forEach((bonusStat) => {
+        if (baseStats[bonusStat] && Math.random() * 100 < 50) {
+          // 50% de chance par stat bonus
+          const baseStat = baseStats[bonusStat];
+          const baseValue =
+            Math.floor(Math.random() * (baseStat.max - baseStat.min + 1)) +
+            baseStat.min;
+          stats[bonusStat] = Math.floor(baseValue * rarity.statMultiplier);
+        }
+      });
+    }
 
     return stats;
   };

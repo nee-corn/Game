@@ -1,16 +1,22 @@
 .inventory-container {
   background: linear-gradient(135deg, #1a1a2e, #16213e);
   border-radius: 15px;
-  padding: 25px;
+  padding: 15px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
   color: #fff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: 0;
 }
 
 /* Onglets */
 .tabs {
   display: flex;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
 }
 
 .tab {
@@ -36,20 +42,33 @@
   background: rgba(0, 212, 255, 0.1);
 }
 
+/* Container pour le contenu des onglets */
+.tab-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 /* Grille d'inventaire */
 .inventory-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 15px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  height: 320px;
 }
 
 .inventory-slot {
-  width: 80px;
-  height: 80px;
-  border: 2px solid #444;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
+  width: 60px;
+  height: 60px;
+  border: 2px solid #555;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -60,67 +79,76 @@
 
 .inventory-slot.empty {
   cursor: default;
+  background: rgba(255, 255, 255, 0.03);
+  border-color: #444;
 }
 
 .inventory-slot.filled:hover {
   transform: scale(1.05);
-  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+  border-color: #777;
 }
 
 .inventory-slot.equipment {
   border-color: #00d4ff;
-  background: rgba(0, 212, 255, 0.1);
+  background: rgba(0, 212, 255, 0.15);
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
 }
 
 .slot-item {
   width: 100%;
   height: 100%;
-  border: 2px solid;
-  border-radius: 6px;
+  border: 1px solid;
+  border-radius: 4px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.4);
   position: relative;
 }
 
 .item-emoji {
-  font-size: 2em;
+  font-size: 1.8em;
 }
 
 .rarity-indicator {
   position: absolute;
   top: 2px;
   right: 2px;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.6em;
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 /* Slots d'équipement */
 .equipment-slots {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  margin-bottom: 30px;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
 }
 
 .equipment-slot {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .slot-label {
   font-weight: bold;
   color: #00d4ff;
   text-align: center;
+  font-size: 0.9em;
 }
 
 /* Stats équipées */
@@ -339,10 +367,20 @@
 @media (max-width: 768px) {
   .inventory-grid {
     grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 12px;
+    height: 280px;
+  }
+
+  .inventory-slot {
+    width: 55px;
+    height: 55px;
   }
 
   .equipment-slots {
     grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px;
   }
 
   .stats-summary {
@@ -350,7 +388,7 @@
   }
 
   .inventory-container {
-    padding: 15px;
+    padding: 12px;
   }
 
   .item-modal {
@@ -361,11 +399,26 @@
     flex-direction: column;
   }
 
-  .tabs {
-    flex-direction: column;
+  .tab {
+    padding: 12px 20px;
+    font-size: 1em;
+  }
+}
+
+@media (max-width: 480px) {
+  .inventory-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 10px;
+    height: 240px;
   }
 
-  .tab {
-    text-align: center;
+  .inventory-slot {
+    width: 50px;
+    height: 50px;
+  }
+
+  .item-emoji {
+    font-size: 1.5em;
   }
 }

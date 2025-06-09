@@ -1,0 +1,293 @@
+.combat-container {
+  background: linear-gradient(135deg, #2c1810, #4a2c20);
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  color: #fff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  margin: 0;
+}
+
+.combat-container h2 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #ff6b35;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-size: 1.5em;
+  flex-shrink: 0;
+}
+
+/* Stats du joueur */
+.player-stats {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  backdrop-filter: blur(10px);
+  flex-shrink: 0;
+}
+
+.player-stats h3 {
+  margin: 0 0 15px 0;
+  color: #00d4ff;
+  text-align: center;
+}
+
+.stats-display {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.stat {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.9em;
+}
+
+.heal-button {
+  background: linear-gradient(45deg, #4caf50, #66bb6a);
+  border: none;
+  padding: 10px 20px;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+.heal-button:hover:not(:disabled) {
+  background: linear-gradient(45deg, #45a049, #4caf50);
+  transform: translateY(-1px);
+}
+
+.heal-button:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+/* Sélection d'ennemi */
+.enemy-selection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.enemy-selection h3 {
+  text-align: center;
+  color: #e0e0e0;
+  margin-bottom: 15px;
+  flex-shrink: 0;
+}
+
+.enemies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.enemy-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 12px;
+  transition: all 0.2s ease;
+  height: fit-content;
+}
+
+.enemy-card:hover {
+  border-color: #ff6b35;
+  transform: translateY(-2px);
+}
+
+.enemy-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.enemy-emoji {
+  font-size: 2.5em;
+  margin-right: 15px;
+}
+
+.enemy-details {
+  flex: 1;
+}
+
+.enemy-details strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #fff;
+  font-size: 1.1em;
+}
+
+.enemy-details div {
+  font-size: 0.9em;
+  margin-bottom: 2px;
+  color: #ccc;
+}
+
+.fight-button {
+  background: linear-gradient(45deg, #ff6b35, #ff8c42);
+  border: none;
+  padding: 10px 15px;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.fight-button:hover:not(:disabled) {
+  background: linear-gradient(45deg, #e55a2b, #ff6b35);
+  transform: scale(1.02);
+}
+
+.fight-button:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+/* Combat Arena */
+.combat-arena {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 15px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.combat-display {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.player-combat,
+.enemy-combat {
+  text-align: center;
+  flex: 1;
+}
+
+.combat-character {
+  font-size: 4em;
+  margin-bottom: 10px;
+}
+
+.hp-bar {
+  width: 100%;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.hp-fill {
+  height: 100%;
+  transition: width 0.5s ease;
+}
+
+.player-hp {
+  background: linear-gradient(45deg, #4caf50, #66bb6a);
+}
+
+.enemy-hp {
+  background: linear-gradient(45deg, #f44336, #ff6b6b);
+}
+
+.vs {
+  font-size: 2em;
+  font-weight: bold;
+  color: #ff6b35;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.attack-button {
+  background: linear-gradient(45deg, #ff6b35, #ff8c42);
+  border: none;
+  padding: 12px 25px;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-weight: bold;
+  display: block;
+  margin: 0 auto 15px auto;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.attack-button:hover:not(:disabled) {
+  background: linear-gradient(45deg, #e55a2b, #ff6b35);
+  transform: scale(1.05);
+}
+
+.attack-button:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+.combat-log {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  flex: 1;
+  overflow-y: auto;
+  max-height: 200px;
+}
+
+.log-entry {
+  margin-bottom: 8px;
+  padding: 5px 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  font-size: 0.9em;
+}
+
+.log-entry:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .combat-display {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .vs {
+    transform: rotate(90deg);
+  }
+
+  .enemies-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-display {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .combat-character {
+    font-size: 3em;
+  }
+}

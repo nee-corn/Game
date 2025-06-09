@@ -1,0 +1,424 @@
+.dungeon-container {
+  background: linear-gradient(135deg, #1a0d2e, #2d1b4e);
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  color: #fff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  margin: 0;
+}
+
+.dungeon-container h2 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #ff0080;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-size: 1.5em;
+  flex-shrink: 0;
+}
+
+.dungeon-info {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 15px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  flex-shrink: 0;
+}
+
+.dungeon-info p {
+  margin: 5px 0;
+  font-size: 1.1em;
+}
+
+/* Sélection de boss */
+.boss-selection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.boss-selection h3 {
+  text-align: center;
+  color: #e0e0e0;
+  margin-bottom: 15px;
+  flex-shrink: 0;
+}
+
+.bosses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  overflow-y: auto;
+}
+
+.boss-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 0, 128, 0.3);
+  border-radius: 12px;
+  padding: 15px;
+  transition: all 0.3s ease;
+  height: fit-content;
+}
+
+.boss-card:hover {
+  border-color: #ff0080;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(255, 0, 128, 0.3);
+}
+
+.boss-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.boss-emoji {
+  font-size: 3em;
+  margin-right: 15px;
+}
+
+.boss-details {
+  flex: 1;
+}
+
+.boss-details strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #fff;
+  font-size: 1.2em;
+}
+
+.boss-details div {
+  font-size: 0.95em;
+  margin-bottom: 3px;
+  color: #ccc;
+}
+
+.mythic-chance {
+  color: #ff0080 !important;
+  font-weight: bold;
+}
+
+.luck-bonus {
+  color: #00ff88;
+}
+
+.challenge-button {
+  background: linear-gradient(45deg, #ff0080, #ff4da6);
+  border: none;
+  padding: 12px 20px;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+  transition: all 0.3s ease;
+  font-size: 1.1em;
+}
+
+.challenge-button:hover:not(:disabled) {
+  background: linear-gradient(45deg, #e6006b, #ff0080);
+  transform: scale(1.05);
+}
+
+.challenge-button:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+/* Combat de boss */
+.dungeon-arena {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 25px;
+}
+
+.battle-display {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 25px;
+  padding: 25px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  border: 2px solid rgba(255, 0, 128, 0.3);
+}
+
+.player-battle,
+.boss-battle-display {
+  text-align: center;
+  flex: 1;
+}
+
+.battle-character {
+  font-size: 5em;
+  margin-bottom: 15px;
+}
+
+.boss-char {
+  filter: drop-shadow(0 0 10px rgba(255, 0, 128, 0.5));
+}
+
+.hp-bar {
+  width: 100%;
+  height: 25px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.boss-bar {
+  border-color: rgba(255, 0, 128, 0.5);
+}
+
+.hp-fill {
+  height: 100%;
+  transition: width 0.8s ease;
+}
+
+.player-hp {
+  background: linear-gradient(45deg, #4caf50, #66bb6a);
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.boss-hp {
+  background: linear-gradient(45deg, #ff0080, #ff4da6);
+  box-shadow: 0 0 10px rgba(255, 0, 128, 0.5);
+}
+
+.vs-boss {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #ff0080;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 0, 128, 0.5);
+  }
+  to {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 0, 128, 0.8);
+  }
+}
+
+.boss-attack-button {
+  background: linear-gradient(45deg, #ff0080, #ff4da6);
+  border: none;
+  padding: 18px 40px;
+  color: white;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.3em;
+  font-weight: bold;
+  display: block;
+  margin: 0 auto 25px auto;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(255, 0, 128, 0.3);
+}
+
+.boss-attack-button:hover:not(:disabled) {
+  background: linear-gradient(45deg, #e6006b, #ff0080);
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(255, 0, 128, 0.5);
+}
+
+.boss-attack-button:disabled {
+  background: #666;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.dungeon-log {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  padding: 20px;
+  max-height: 250px;
+  overflow-y: auto;
+  border: 2px solid rgba(255, 0, 128, 0.2);
+}
+
+.dungeon-log .log-entry {
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 1em;
+  border-left: 3px solid #ff0080;
+}
+
+.dungeon-log .log-entry:last-child {
+  margin-bottom: 0;
+}
+
+/* Modal mythique */
+.mythic-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(8px);
+}
+
+.mythic-modal {
+  background: linear-gradient(135deg, #2d1b4e, #1a0d2e);
+  border-radius: 20px;
+  padding: 0;
+  max-width: 600px;
+  width: 90%;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(255, 0, 128, 0.6);
+  border: 3px solid #ff0080;
+  animation: mythicAppear 0.5s ease-out;
+}
+
+@keyframes mythicAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8) rotate(5deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.mythic-header {
+  background: linear-gradient(45deg, #ff0080, #ff4da6);
+  padding: 25px;
+  text-align: center;
+}
+
+.mythic-header h2 {
+  margin: 0;
+  color: white;
+  font-size: 2em;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  50% {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5),
+      0 0 20px rgba(255, 255, 255, 0.8);
+  }
+}
+
+.mythic-item-display {
+  padding: 30px;
+  text-align: center;
+}
+
+.mythic-item-icon {
+  font-size: 5em;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 15px rgba(255, 0, 128, 0.7));
+}
+
+.mythic-item-display h3 {
+  margin: 0 0 25px 0;
+  font-size: 1.8em;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.mythic-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.mythic-stat {
+  background: rgba(255, 0, 128, 0.1);
+  border: 2px solid rgba(255, 0, 128, 0.3);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mythic-stat .stat-name {
+  text-transform: capitalize;
+  font-weight: bold;
+}
+
+.mythic-stat .stat-value {
+  font-weight: bold;
+  color: #00ff88;
+  font-size: 1.1em;
+}
+
+.mythic-value {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #ffd700;
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.close-mythic-button {
+  background: linear-gradient(45deg, #00ff88, #4caf50);
+  border: none;
+  padding: 18px 30px;
+  color: white;
+  font-size: 1.2em;
+  font-weight: bold;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.close-mythic-button:hover {
+  background: linear-gradient(45deg, #00e67a, #00ff88);
+  transform: scale(1.02);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .battle-display {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .vs-boss {
+    transform: rotate(90deg);
+    margin: 10px 0;
+  }
+
+  .bosses-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .battle-character {
+    font-size: 4em;
+  }
+
+  .mythic-modal {
+    width: 95%;
+  }
+
+  .mythic-stats {
+    grid-template-columns: 1fr;
+  }
+}

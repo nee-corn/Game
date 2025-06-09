@@ -36,7 +36,6 @@ function Inventory({
     onUnequipItem(selectedItem);
     closeItemModal();
   };
-
   const statsIcons = {
     attaque: "⚔️",
     défense: "🛡️",
@@ -45,6 +44,7 @@ function Inventory({
     agilité: "💨",
     critique: "💥",
     esquive: "🌟",
+    luck: "🍀",
   };
 
   const getEquippedStats = () => {

@@ -1,41 +1,47 @@
 .equipment-forge {
   background: linear-gradient(135deg, #2c1810, #4a2c20);
   border-radius: 15px;
-  padding: 25px;
+  padding: 15px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
   color: #fff;
-  margin-bottom: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  margin: 0;
 }
 
 .equipment-forge h2 {
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 18px;
   color: #ff6b35;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  font-size: 2em;
+  font-size: 1.6em;
+  flex-shrink: 0;
 }
 
 .forge-area {
-  margin-bottom: 30px;
+  margin-bottom: 15px;
+  flex-shrink: 0;
 }
 
 .forge-button-container {
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
 }
 
 .forge-button {
   background: linear-gradient(45deg, #ff6b35, #ff8c42);
   border: none;
-  padding: 15px 30px;
-  font-size: 1.2em;
+  padding: 14px 28px;
+  font-size: 1.15em;
   font-weight: bold;
   color: white;
   border-radius: 10px;
   cursor: pointer;
   box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
   transition: all 0.3s ease;
-  min-width: 250px;
+  min-width: 220px;
 }
 
 .forge-button:hover:not(:disabled) {
@@ -87,13 +93,15 @@
 .last-forged {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
+  padding: 15px;
+  margin-bottom: 15px;
   backdrop-filter: blur(10px);
+  flex: 1;
+  overflow-y: auto;
 }
 
 .last-forged h3 {
-  margin: 0 0 15px 0;
+  margin: 0 0 12px 0;
   color: #ffeb3b;
   text-align: center;
 }
@@ -102,7 +110,7 @@
   background: rgba(255, 255, 255, 0.05);
   border: 2px solid;
   border-radius: 10px;
-  padding: 15px;
+  padding: 12px;
   backdrop-filter: blur(5px);
 }
 
@@ -110,42 +118,42 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .equipment-emoji {
-  font-size: 1.5em;
-  margin-right: 10px;
+  font-size: 1.3em;
+  margin-right: 8px;
 }
 
 .equipment-name {
   flex: 1;
   font-weight: bold;
-  font-size: 1.1em;
+  font-size: 1em;
 }
 
 .rarity-badge {
   font-weight: bold;
-  padding: 4px 8px;
-  border-radius: 15px;
+  padding: 3px 6px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.1);
-  font-size: 0.9em;
+  font-size: 0.8em;
 }
 
 .equipment-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 8px;
-  margin-bottom: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 6px;
+  margin-bottom: 10px;
 }
 
 .stat {
   display: flex;
   justify-content: space-between;
-  padding: 5px 10px;
+  padding: 4px 8px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 5px;
-  font-size: 0.9em;
+  font-size: 0.8em;
 }
 
 .stat-name {
@@ -162,7 +170,8 @@
   font-weight: bold;
   color: #ffd700;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
-  padding-top: 10px;
+  padding-top: 8px;
+  font-size: 0.9em;
 }
 
 .rarity-info {

@@ -9,22 +9,29 @@ body {
   background: linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e);
   min-height: 100vh;
   color: #ffffff;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 .app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  width: 100vw;
+  overflow-x: hidden;
 }
 
 .app-header {
   background: linear-gradient(45deg, #2c3e50, #34495e);
-  padding: 20px;
+  padding: 15px 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 3px solid #3498db;
+  flex-shrink: 0;
+  width: 100%;
 }
 
 .app-header h1 {
@@ -47,23 +54,92 @@ body {
 
 .app-main {
   flex: 1;
-  padding: 30px;
+  padding: 15px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 30px;
-  max-width: 1400px;
-  margin: 0 auto;
+  grid-template-rows: 1fr 1fr;
+  gap: 15px;
   width: 100%;
+  height: calc(100vh - 100px);
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* Layout selon demande : Forge à gauche, Équipement à droite, Donjons et Combat en dessous */
+.app-main > *:nth-child(1) {
+  /* EquipmentForge */
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.app-main > *:nth-child(2) {
+  /* Combat */
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.app-main > *:nth-child(3) {
+  /* Dungeon */
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.app-main > *:nth-child(4) {
+  /* Inventory (Équipement) */
+  grid-column: 2;
+  grid-row: 1;
 }
 
 /* Responsive design */
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
   .app-main {
     grid-template-columns: 1fr;
-    padding: 20px;
-    gap: 20px;
+    grid-template-rows: auto auto auto auto;
+    height: calc(100vh - 100px);
+    padding: 10px;
+    gap: 10px;
   }
 
+  .app-main > *:nth-child(1) {
+    /* EquipmentForge */
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .app-main > *:nth-child(2) {
+    /* Combat */
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .app-main > *:nth-child(3) {
+    /* Dungeon */
+    grid-column: 1;
+    grid-row: 4;
+  }
+
+  .app-main > *:nth-child(4) {
+    /* Inventory (Équipement) */
+    grid-column: 1;
+    grid-row: 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-main {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+    padding: 10px;
+    gap: 15px;
+  }
+
+  .app-main > * {
+    grid-column: 1 !important;
+    grid-row: unset !important;
+  }
+}
+
+@media (max-width: 1024px) {
   .app-header {
     flex-direction: column;
     gap: 15px;
@@ -77,11 +153,20 @@ body {
 
 @media (max-width: 768px) {
   .app-main {
-    padding: 15px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+    padding: 8px;
+    gap: 8px;
+    height: calc(100vh - 90px);
+  }
+
+  .app-main > * {
+    grid-column: 1 !important;
+    grid-row: unset !important;
   }
 
   .app-header {
-    padding: 15px;
+    padding: 10px 15px;
   }
 
   .app-header h1 {
@@ -94,21 +179,44 @@ body {
   }
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 12px;
+/* Styles pour optimiser l'espace des composants */
+.app-main > * {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-::-webkit-scrollbar-track {
+/* Assurer que les composants utilisent tout l'espace disponible */
+.equipment-forge,
+.inventory-container,
+.combat-container,
+.dungeon-container {
+  height: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+/* Style pour les scrollbars des composants */
+.equipment-forge::-webkit-scrollbar,
+.inventory-container::-webkit-scrollbar,
+.combat-container::-webkit-scrollbar,
+.dungeon-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.equipment-forge::-webkit-scrollbar-track,
+.inventory-container::-webkit-scrollbar-track,
+.combat-container::-webkit-scrollbar-track,
+.dungeon-container::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb {
+.equipment-forge::-webkit-scrollbar-thumb,
+.inventory-container::-webkit-scrollbar-thumb,
+.combat-container::-webkit-scrollbar-thumb,
+.dungeon-container::-webkit-scrollbar-thumb {
   background: linear-gradient(45deg, #3498db, #2980b9);
-  border-radius: 6px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(45deg, #2980b9, #3498db);
+  border-radius: 4px;
 }
