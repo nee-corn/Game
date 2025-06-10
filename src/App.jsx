@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import EquipmentForge from "./components/EquipmentForge";
 import Inventory from "./components/Inventory";
 import Combat from "./components/Combat";
+import AchievementsPanel from "./components/AchievementsPanel";
 import SettingsModal from "./components/SettingsModal";
 import { SaveSystem, useAutoSave } from "./utils/SaveSystem";
 import "./components/SaveSystem.css";
@@ -13,13 +14,16 @@ function App() {
   const [equippedItems, setEquippedItems] = useState({});
   const [gold, setGold] = useState(100);
   const [showCombatModal, setShowCombatModal] = useState(false);
+  const [showAchievementsModal, setShowAchievementsModal] = useState(false);
   const [combatInProgress, setCombatInProgress] = useState(false);
   const [playerLevel, setPlayerLevel] = useState(1);
   const [experience, setExperience] = useState(0);
-
   // États pour les compagnons et passifs
   const [companions, setCompanions] = useState([]);
   const [passiveAbilities, setPassiveAbilities] = useState([]);
+
+  // État pour les tickets de donjon
+  const [dungeonTickets, setDungeonTickets] = useState(0);
 
   // États pour les statistiques
   const [gameStats, setGameStats] = useState({
@@ -51,9 +55,7 @@ function App() {
 
       if (savedData) {
         // Fusionner avec les données par défaut pour compatibilité
-        const mergedData = SaveSystem.mergeWithDefaults(savedData);
-
-        // Charger les données
+        const mergedData = SaveSystem.mergeWithDefaults(savedData); // Charger les données
         setGold(mergedData.gold || 100);
         setInventory(mergedData.inventory || []);
         setEquippedItems(mergedData.equippedItems || {});
@@ -61,6 +63,7 @@ function App() {
         setPassiveAbilities(mergedData.passiveAbilities || []);
         setPlayerLevel(mergedData.playerLevel || 1);
         setExperience(mergedData.experience || 0);
+        setDungeonTickets(mergedData.dungeonTickets || 0);
         setGameStats(mergedData.stats || SaveSystem.getDefaultGameData().stats);
         setGameSettings(
           mergedData.settings || SaveSystem.getDefaultGameData().settings
@@ -80,7 +83,6 @@ function App() {
 
     loadSaveData();
   }, []);
-
   // Préparer les données pour la sauvegarde
   const gameData = {
     gold,
@@ -90,6 +92,7 @@ function App() {
     passiveAbilities,
     playerLevel,
     experience,
+    dungeonTickets,
     stats: gameStats,
     settings: gameSettings,
   };
@@ -99,13 +102,35 @@ function App() {
     gameData,
     gameSettings.autoSave && isLoaded
   );
-
   // Fonctions pour mettre à jour les statistiques
   const updateStats = (statUpdates) => {
     setGameStats((prev) => ({
       ...prev,
       ...statUpdates,
     }));
+  };
+
+  // Fonction pour réclamer les récompenses d'achievements
+  const handleRewardClaimed = (reward) => {
+    if (reward.gold) {
+      setGold((prev) => prev + reward.gold);
+    }
+    if (reward.masteryPoints) {
+      // TODO: Implémenter les points de maîtrise quand le système sera créé
+      console.log(`Reçu ${reward.masteryPoints} points de maîtrise`);
+    }
+    if (reward.inventorySlots) {
+      // TODO: Implémenter l'extension d'inventaire quand nécessaire
+      console.log(`+${reward.inventorySlots} emplacements d'inventaire`);
+    }
+    if (reward.unlockPrestige) {
+      // TODO: Implémenter le système de prestige
+      console.log("Système de prestige débloqué !");
+    }
+    if (reward.goldMultiplier) {
+      // TODO: Appliquer le multiplicateur d'or permanent
+      console.log(`Multiplicateur d'or: x${reward.goldMultiplier}`);
+    }
   };
 
   // Fonction pour réinitialiser le jeu
@@ -340,12 +365,19 @@ function App() {
               title="Paramètres"
             >
               ⚙️
-            </button>
+            </button>{" "}
             <button
               className="combat-toggle-button"
               onClick={() => setShowCombatModal(true)}
             >
               ⚔️ Combat
+            </button>
+            <button
+              className="achievements-button"
+              onClick={() => setShowAchievementsModal(true)}
+              title="Achievements & Quêtes"
+            >
+              🏆 Achievements
             </button>
           </div>{" "}
         </div>
@@ -387,8 +419,7 @@ function App() {
               >
                 ➖{" "}
               </button>
-            </div>
-
+            </div>{" "}
             <Combat
               equippedItems={equippedItems}
               gold={gold}
@@ -399,6 +430,8 @@ function App() {
               setCompanions={setCompanions}
               passiveAbilities={passiveAbilities}
               setPassiveAbilities={setPassiveAbilities}
+              dungeonTickets={dungeonTickets}
+              setDungeonTickets={setDungeonTickets}
             />
           </div>
         </div>
@@ -433,6 +466,32 @@ function App() {
           onResetGame={resetGame}
           manualSave={manualSave}
         />
+      )}
+
+      {/* Modal des Achievements */}
+      {showAchievementsModal && (
+        <div className="combat-modal-overlay">
+          <div className="combat-modal">
+            <div className="combat-modal-header">
+              <h2>🏆 Achievements & Quêtes</h2>
+              <button
+                className="combat-modal-minimize"
+                onClick={() => setShowAchievementsModal(false)}
+                title="Fermer"
+              >
+                ❌
+              </button>
+            </div>
+
+            <AchievementsPanel
+              gameStats={gameStats}
+              onRewardClaimed={handleRewardClaimed}
+              playerLevel={playerLevel}
+              totalGold={gold}
+              inventory={inventory}
+            />
+          </div>
+        </div>
       )}
 
       {/* Notification de bienvenue */}

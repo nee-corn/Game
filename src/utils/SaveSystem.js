@@ -85,7 +85,6 @@ export class SaveSystem {
       reader.readAsText(file);
     });
   }
-
   // Créer les données par défaut
   static getDefaultGameData() {
     return {
@@ -103,6 +102,9 @@ export class SaveSystem {
       
       // Capacités passives
       passiveAbilities: [],
+      
+      // Système de donjon
+      dungeonTickets: 0,
       
       // Statistiques de jeu
       stats: {

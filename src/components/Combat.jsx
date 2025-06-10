@@ -1,64 +1,288 @@
 import { useState, useEffect } from "react";
+import { GameBalance } from "../utils/GameBalance";
 import "./Combat.css";
 
+// Système d'ennemis progressifs avec déverrouillage
 const ENEMIES = [
-  { name: "Gobelin", emoji: "👹", baseHp: 30, baseAttack: 8, baseGold: 15 },
-  { name: "Orc", emoji: "🧌", baseHp: 50, baseAttack: 12, baseGold: 25 },
-  { name: "Troll", emoji: "👺", baseHp: 80, baseAttack: 18, baseGold: 40 },
-  { name: "Dragon", emoji: "🐉", baseHp: 120, baseAttack: 25, baseGold: 60 },
-  { name: "Démon", emoji: "😈", baseHp: 180, baseAttack: 35, baseGold: 100 },
-  { name: "Spectre", emoji: "👻", baseHp: 45, baseAttack: 15, baseGold: 30 },
-  { name: "Squelette", emoji: "💀", baseHp: 35, baseAttack: 10, baseGold: 20 },
-  { name: "Vampire", emoji: "🧛", baseHp: 90, baseAttack: 22, baseGold: 50 },
+  // Zone Débutant (Niveau 1-5)
+  {
+    name: "Gobelin",
+    emoji: "👹",
+    baseHp: 35,
+    baseAttack: 10,
+    baseGold: 18,
+    expReward: 8,
+    unlockLevel: 1,
+    zone: "Forêt Sombre",
+    description: "Un petit gobelin vicieux",
+  },
+  {
+    name: "Loup",
+    emoji: "🐺",
+    baseHp: 45,
+    baseAttack: 12,
+    baseGold: 22,
+    expReward: 10,
+    unlockLevel: 2,
+    zone: "Forêt Sombre",
+    description: "Un loup sauvage affamé",
+  },
+  {
+    name: "Bandit",
+    emoji: "🗡️",
+    baseHp: 50,
+    baseAttack: 15,
+    baseGold: 28,
+    expReward: 12,
+    unlockLevel: 3,
+    zone: "Forêt Sombre",
+    description: "Un bandit de grand chemin",
+  },
+
+  // Zone Intermédiaire (Niveau 4-10)
+  {
+    name: "Orc Guerrier",
+    emoji: "🧌",
+    baseHp: 70,
+    baseAttack: 18,
+    baseGold: 35,
+    expReward: 15,
+    unlockLevel: 4,
+    zone: "Terres Sauvages",
+    description: "Un orc brutal et expérimenté",
+  },
+  {
+    name: "Squelette Archer",
+    emoji: "💀🏹",
+    baseHp: 55,
+    baseAttack: 22,
+    baseGold: 32,
+    expReward: 18,
+    unlockLevel: 5,
+    zone: "Terres Sauvages",
+    description: "Un archer mort-vivant précis",
+  },
+  {
+    name: "Troll des Cavernes",
+    emoji: "👺",
+    baseHp: 95,
+    baseAttack: 25,
+    baseGold: 45,
+    expReward: 22,
+    unlockLevel: 6,
+    zone: "Terres Sauvages",
+    description: "Un troll massif et régénérant",
+  },
+
+  // Zone Avancée (Niveau 8-15)
+  {
+    name: "Vampire Noble",
+    emoji: "🧛‍♂️",
+    baseHp: 85,
+    baseAttack: 30,
+    baseGold: 60,
+    expReward: 25,
+    unlockLevel: 8,
+    zone: "Château Maudit",
+    description: "Un vampire aristocrate assoiffé",
+  },
+  {
+    name: "Golem de Pierre",
+    emoji: "🗿",
+    baseHp: 120,
+    baseAttack: 28,
+    baseGold: 55,
+    expReward: 28,
+    unlockLevel: 9,
+    zone: "Château Maudit",
+    description: "Une construction magique animée",
+  },
   {
     name: "Sorcier Noir",
     emoji: "🧙‍♂️",
-    baseHp: 70,
-    baseAttack: 28,
-    baseGold: 45,
+    baseHp: 75,
+    baseAttack: 35,
+    baseGold: 65,
+    expReward: 30,
+    unlockLevel: 10,
+    zone: "Château Maudit",
+    description: "Un mage corrompu par les ténèbres",
   },
-  { name: "Golem", emoji: "🗿", baseHp: 150, baseAttack: 20, baseGold: 70 },
-  { name: "Hydre", emoji: "🐍", baseHp: 110, baseAttack: 30, baseGold: 55 },
-  { name: "Phoenix", emoji: "🔥", baseHp: 100, baseAttack: 35, baseGold: 65 },
+
+  // Zone Expert (Niveau 12-20)
+  {
+    name: "Dragon Mineur",
+    emoji: "🐲",
+    baseHp: 150,
+    baseAttack: 40,
+    baseGold: 85,
+    expReward: 35,
+    unlockLevel: 12,
+    zone: "Montagnes Draconiques",
+    description: "Un jeune dragon territorial",
+  },
+  {
+    name: "Démon Garde",
+    emoji: "😈",
+    baseHp: 130,
+    baseAttack: 45,
+    baseGold: 90,
+    expReward: 38,
+    unlockLevel: 14,
+    zone: "Montagnes Draconiques",
+    description: "Un démon gardien féroce",
+  },
+  {
+    name: "Hydre Bicéphale",
+    emoji: "🐍🐍",
+    baseHp: 110,
+    baseAttack: 50,
+    baseGold: 95,
+    expReward: 42,
+    unlockLevel: 16,
+    zone: "Montagnes Draconiques",
+    description: "Une hydre à deux têtes venimeuse",
+  },
+
+  // Zone Légendaire (Niveau 18+)
+  {
+    name: "Liche Ancienne",
+    emoji: "💀👑",
+    baseHp: 180,
+    baseAttack: 55,
+    baseGold: 120,
+    expReward: 50,
+    unlockLevel: 18,
+    zone: "Royaume des Morts",
+    description: "Un mage-roi mort-vivant",
+    isElite: true,
+  },
+  {
+    name: "Titan de Fer",
+    emoji: "⚔️🗿",
+    baseHp: 220,
+    baseAttack: 60,
+    baseGold: 140,
+    expReward: 55,
+    unlockLevel: 20,
+    zone: "Royaume des Morts",
+    description: "Un colosse de métal et de magie",
+    isElite: true,
+  },
+  {
+    name: "Phoenix Éternel",
+    emoji: "🔥🦅",
+    baseHp: 160,
+    baseAttack: 65,
+    baseGold: 150,
+    expReward: 60,
+    unlockLevel: 22,
+    zone: "Royaume des Morts",
+    description: "Un oiseau de feu immortel",
+    isElite: true,
+  },
 ];
 
-// Données du donjon
+// Système de donjons progressifs
 const DUNGEON_ENEMIES = [
   {
-    name: "Gardien Ancien",
-    emoji: "🗿",
-    hp: 200,
-    attack: 40,
+    name: "Gardien de la Forêt",
+    emoji: "🌳👹",
+    hp: 180,
+    attack: 35,
     goldReward: 150,
+    expReward: 80,
     mythicChance: 2,
+    unlockLevel: 5,
+    zone: "Forêt Sombre",
+    description: "Le protecteur corrompu de la forêt",
+    type: "boss",
   },
   {
-    name: "Seigneur des Ombres",
-    emoji: "👤",
-    hp: 350,
-    attack: 60,
-    goldReward: 250,
-    mythicChance: 5,
+    name: "Roi des Orcs",
+    emoji: "👑🧌",
+    hp: 280,
+    attack: 45,
+    goldReward: 220,
+    expReward: 120,
+    mythicChance: 3,
+    unlockLevel: 8,
+    zone: "Terres Sauvages",
+    description: "Le chef brutal de la tribu orc",
+    type: "boss",
+  },
+  {
+    name: "Seigneur Vampire",
+    emoji: "🦇👑",
+    hp: 380,
+    attack: 55,
+    goldReward: 300,
+    expReward: 160,
+    mythicChance: 4,
+    unlockLevel: 12,
+    zone: "Château Maudit",
+    description: "Le maître du château des ténèbres",
+    type: "boss",
   },
   {
     name: "Dragon Ancien",
-    emoji: "🐲",
+    emoji: "🐲👑",
     hp: 500,
-    attack: 80,
-    goldReward: 400,
+    attack: 70,
+    goldReward: 420,
+    expReward: 220,
+    mythicChance: 6,
+    unlockLevel: 16,
+    zone: "Montagnes Draconiques",
+    description: "Un dragon millénaire gardien de trésors",
+    type: "boss",
+  },
+  {
+    name: "Archliche Suprême",
+    emoji: "💀⚡",
+    hp: 650,
+    attack: 85,
+    goldReward: 550,
+    expReward: 280,
     mythicChance: 8,
+    unlockLevel: 20,
+    zone: "Royaume des Morts",
+    description: "Le nécromancien ultime des terres maudites",
+    type: "boss",
   },
   {
     name: "Seigneur du Chaos",
-    emoji: "👑",
-    hp: 2000,
-    attack: 150,
-    goldReward: 1000,
-    mythicChance: 0, // Pas de mythique, mais équipements ultra-rares
+    emoji: "👑🌌",
+    hp: 1200,
+    attack: 120,
+    goldReward: 800,
+    expReward: 400,
+    mythicChance: 0,
     transcendentChance: 3,
     celestialChance: 1,
     entryCost: 500,
+    unlockLevel: 25,
+    zone: "Dimension du Chaos",
+    description: "L'entité cosmique maîtresse du chaos",
     isUltraBoss: true,
+    type: "ultra",
+  },
+  {
+    name: "Créateur Primordial",
+    emoji: "✨🌍",
+    hp: 2000,
+    attack: 150,
+    goldReward: 1200,
+    expReward: 600,
+    transcendentChance: 5,
+    celestialChance: 2,
+    entryCost: 800,
+    unlockLevel: 30,
+    zone: "Nexus Primordial",
+    description: "L'être originel créateur de toute existence",
+    isUltraBoss: true,
+    type: "cosmic",
+    phases: 3,
   },
 ];
 
@@ -143,6 +367,8 @@ function Combat({
   setCompanions,
   passiveAbilities,
   setPassiveAbilities,
+  dungeonTickets = 0,
+  setDungeonTickets,
 }) {
   // État des onglets
   const [activeTab, setActiveTab] = useState("combat");
@@ -156,23 +382,50 @@ function Combat({
   const [maxPlayerHp, setMaxPlayerHp] = useState(100);
   const [experience, setExperience] = useState(0);
 
-  // États du système de vagues
-  const [waveNumber, setWaveNumber] = useState(1);
-  const [totalKills, setTotalKills] = useState(0);
-  const [isInWaveMode, setIsInWaveMode] = useState(false);
-  const [waveProgress, setWaveProgress] = useState(0);
-  const [enemiesPerWave] = useState(5); // 5 ennemis par vague
-
   // États du donjon
   const [currentBoss, setCurrentBoss] = useState(null);
   const [bossHp, setBossHp] = useState(0);
   const [isInDungeon, setIsInDungeon] = useState(false);
   const [dungeonLog, setDungeonLog] = useState([]);
   const [foundMythic, setFoundMythic] = useState(null);
+
   // États des compagnons
   const [activeCompanion, setActiveCompanion] = useState(null);
   const [companionHp, setCompanionHp] = useState(0);
   const [maxCompanionHp, setMaxCompanionHp] = useState(0);
+
+  // États pour les mécaniques avancées
+  const [streakCount, setStreakCount] = useState(1);
+  const [lastVictoryTime, setLastVictoryTime] = useState(0);
+  const [combatEffects, setCombatEffects] = useState([]);
+
+  // Fonction pour obtenir les ennemis débloqués
+  const getUnlockedEnemies = () => {
+    return ENEMIES.filter((enemy) => enemy.unlockLevel <= playerLevel);
+  };
+
+  // Fonction pour obtenir les donjons débloqués
+  const getUnlockedDungeons = () => {
+    return DUNGEON_ENEMIES.filter(
+      (dungeon) => dungeon.unlockLevel <= playerLevel
+    );
+  };
+
+  // Fonction pour grouper les ennemis par zone
+  const getEnemiesByZone = () => {
+    const unlockedEnemies = getUnlockedEnemies();
+    const zones = {};
+
+    unlockedEnemies.forEach((enemy) => {
+      if (!zones[enemy.zone]) {
+        zones[enemy.zone] = [];
+      }
+      zones[enemy.zone].push(enemy);
+    });
+
+    return zones;
+  };
+
   const getPlayerStats = () => {
     const baseStats = {
       attaque: 10,
@@ -365,6 +618,112 @@ function Combat({
       emoji: equipmentType.emoji,
     };
   };
+
+  // Fonction pour générer un équipement aléatoire avec rareté spécifiée
+  const generateRandomEquipment = (rarityKey = "COMMON") => {
+    const equipmentTypeKey =
+      Object.keys(EQUIPMENT_TYPES)[
+        Math.floor(Math.random() * Object.keys(EQUIPMENT_TYPES).length)
+      ];
+    const equipmentType = EQUIPMENT_TYPES[equipmentTypeKey];
+
+    // Déterminer la rareté
+    let rarity;
+    switch (rarityKey) {
+      case "MYTHIC":
+        rarity = MYTHIC_RARITY;
+        break;
+      case "LEGENDARY":
+        rarity = {
+          name: "Légendaire",
+          color: "#ff6b35",
+          statMultiplier: 3,
+          emoji: "⭐",
+          key: "LEGENDARY",
+        };
+        break;
+      case "EPIC":
+        rarity = {
+          name: "Épique",
+          color: "#9b59b6",
+          statMultiplier: 2.2,
+          emoji: "💜",
+          key: "EPIC",
+        };
+        break;
+      case "RARE":
+        rarity = {
+          name: "Rare",
+          color: "#3498db",
+          statMultiplier: 1.7,
+          emoji: "💙",
+          key: "RARE",
+        };
+        break;
+      default:
+        rarity = {
+          name: "Commun",
+          color: "#95a5a6",
+          statMultiplier: 1,
+          emoji: "⚪",
+          key: "COMMON",
+        };
+    }
+
+    const baseStats = {
+      attaque: { min: 5, max: 15 },
+      défense: { min: 3, max: 12 },
+      vie: { min: 20, max: 50 },
+      mana: { min: 10, max: 30 },
+      agilité: { min: 2, max: 8 },
+      critique: { min: 1, max: 6 },
+      esquive: { min: 1, max: 5 },
+      luck: { min: 1, max: 4 },
+    };
+
+    const stats = {};
+
+    // Générer les stats de base
+    equipmentType.stats.forEach((statName) => {
+      const baseStat = baseStats[statName];
+      const baseValue =
+        Math.floor(Math.random() * (baseStat.max - baseStat.min + 1)) +
+        baseStat.min;
+      stats[statName] = Math.floor(baseValue * rarity.statMultiplier);
+    });
+
+    // Chance d'avoir des stats bonus selon la rareté
+    const bonusChance =
+      rarity.statMultiplier > 2 ? 80 : rarity.statMultiplier > 1.5 ? 50 : 20;
+    if (Math.random() * 100 < bonusChance) {
+      equipmentType.bonusStats.forEach((bonusStat) => {
+        if (baseStats[bonusStat] && Math.random() * 100 < 30) {
+          const baseStat = baseStats[bonusStat];
+          const baseValue =
+            Math.floor(Math.random() * (baseStat.max - baseStat.min + 1)) +
+            baseStat.min;
+          stats[bonusStat] = Math.floor(
+            baseValue * rarity.statMultiplier * 0.6
+          );
+        }
+      });
+    }
+
+    const value =
+      Object.values(stats).reduce((sum, value) => sum + value, 0) *
+      Math.floor(rarity.statMultiplier * 3);
+
+    return {
+      id: Date.now() + Math.random(),
+      name: `${rarity.name} ${equipmentType.name}`,
+      type: equipmentType,
+      rarity: rarity,
+      stats,
+      value,
+      emoji: equipmentType.emoji,
+    };
+  };
+
   useEffect(() => {
     const playerStats = getPlayerStats();
     const newMaxHp = playerStats.vie;
@@ -403,18 +762,29 @@ function Combat({
 
       return () => clearInterval(regenInterval);
     }
-  }, [activeCompanion, isInCombat, maxPlayerHp]);
-  // Fonctions du donjon
+  }, [activeCompanion, isInCombat, maxPlayerHp]); // Fonctions du donjon
   const startDungeon = (bossIndex) => {
     const boss = { ...DUNGEON_ENEMIES[bossIndex] };
-    const entryCost = boss.entryCost || 100;
 
-    if (gold < entryCost) {
-      alert(`Il faut ${entryCost} or pour entrer dans ce donjon !`);
-      return;
+    // Vérifier si c'est un boss ultime qui coûte de l'or
+    if (boss.isUltraBoss) {
+      const entryCost = boss.entryCost || 500;
+      if (gold < entryCost) {
+        alert(`Il faut ${entryCost} or pour défier ce boss ultime !`);
+        return;
+      }
+      setGold((prev) => prev - entryCost);
+    } else {
+      // Boss normaux nécessitent un ticket
+      if (dungeonTickets < 1) {
+        alert(
+          "Il faut un ticket de donjon pour entrer ! Battez des monstres pour en obtenir."
+        );
+        return;
+      }
+      setDungeonTickets((prev) => prev - 1);
     }
 
-    setGold((prev) => prev - entryCost);
     setCurrentBoss(boss);
     setBossHp(boss.hp);
     setIsInDungeon(true);
@@ -428,7 +798,8 @@ function Combat({
       ]);
     } else {
       setDungeonLog([
-        `🏰 Vous entrez dans le donjon pour affronter ${boss.emoji} ${boss.name} !`,
+        `🏰 Vous utilisez un ticket pour affronter ${boss.emoji} ${boss.name} !`,
+        `🎫 Tickets restants : ${dungeonTickets - 1}`,
       ]);
     }
   };
@@ -574,97 +945,7 @@ function Combat({
     setFoundMythic(null);
     setDungeonLog([]);
   };
-
-  // Fonctions du système de vagues
-  const generateRandomEnemy = (waveNumber) => {
-    const randomIndex = Math.floor(Math.random() * ENEMIES.length);
-    const baseEnemy = { ...ENEMIES[randomIndex] };
-
-    // Scaling basé sur le numéro de vague
-    const waveMultiplier = 1 + (waveNumber - 1) * 0.4; // +40% par vague
-    const levelMultiplier = 1 + (playerLevel - 1) * 0.2; // +20% par niveau joueur
-    const totalMultiplier = waveMultiplier * levelMultiplier;
-
-    return {
-      ...baseEnemy,
-      hp: Math.floor(baseEnemy.baseHp * totalMultiplier),
-      attack: Math.floor(baseEnemy.baseAttack * totalMultiplier),
-      goldReward: Math.floor(baseEnemy.baseGold * totalMultiplier),
-      maxHp: Math.floor(baseEnemy.baseHp * totalMultiplier), // Pour la barre de vie
-    };
-  };
-
-  const startWaveMode = () => {
-    setIsInWaveMode(true);
-    setWaveNumber(1);
-    setTotalKills(0);
-    setWaveProgress(0);
-    setPlayerHp(getPlayerStats().vie);
-    setCombatLog([`🌊 Mode Vagues démarré ! Vague 1 commence...`]);
-
-    // Démarre avec le premier ennemi
-    const firstEnemy = generateRandomEnemy(1);
-    setCurrentEnemy(firstEnemy);
-    setEnemyHp(firstEnemy.hp);
-    setIsInCombat(true);
-  };
-
-  const stopWaveMode = () => {
-    setIsInWaveMode(false);
-    setIsInCombat(false);
-    setCurrentEnemy(null);
-    setWaveNumber(1);
-    setTotalKills(0);
-    setWaveProgress(0);
-    setCombatLog([]);
-  };
-
-  const nextWaveEnemy = () => {
-    const newProgress = waveProgress + 1;
-    setWaveProgress(newProgress);
-    setTotalKills((prev) => prev + 1);
-
-    if (newProgress >= enemiesPerWave) {
-      // Passer à la vague suivante
-      const nextWave = waveNumber + 1;
-      setWaveNumber(nextWave);
-      setWaveProgress(0);
-      setCombatLog((prev) => [
-        ...prev,
-        `🎉 Vague ${waveNumber} terminée ! Vague ${nextWave} commence...`,
-      ]);
-
-      // Bonus de vie entre les vagues
-      const healAmount = Math.floor(maxPlayerHp * 0.3); // 30% de soin
-      setPlayerHp((prev) => Math.min(maxPlayerHp, prev + healAmount));
-      setCombatLog((prev) => [
-        ...prev,
-        `💚 Vous récupérez ${healAmount} PV entre les vagues !`,
-      ]);
-    }
-
-    // Générer le prochain ennemi
-    setTimeout(() => {
-      const nextEnemy = generateRandomEnemy(waveNumber);
-      setCurrentEnemy(nextEnemy);
-      setEnemyHp(nextEnemy.hp);
-
-      if (newProgress < enemiesPerWave) {
-        setCombatLog((prev) => [
-          ...prev,
-          `⚔️ Prochain ennemi : ${nextEnemy.emoji} ${nextEnemy.name} !`,
-        ]);
-      } else {
-        setCombatLog((prev) => [
-          ...prev,
-          `⚔️ Premier ennemi de la vague ${waveNumber} : ${nextEnemy.emoji} ${nextEnemy.name} !`,
-        ]);
-      }
-    }, 1500);
-  };
   const startCombat = (enemyIndex) => {
-    if (isInWaveMode) return; // Ne permet pas de démarrer un combat individuel en mode vague
-
     const enemy = { ...ENEMIES[enemyIndex] };
     // Augmente la difficulté selon le niveau du joueur
     enemy.hp = Math.floor(enemy.baseHp * (1 + (playerLevel - 1) * 0.3));
@@ -713,15 +994,34 @@ function Combat({
       finalDamage = Math.floor(damage * 1.5);
     }
 
-    // Ajouter les dégâts du compagnon actif
+    // Ajouter les dégâts du compagnon actif (système équilibré)
     if (activeCompanion && companionHp > 0) {
-      const companionDamage =
-        Math.floor(Math.random() * 5) + activeCompanion.attack;
+      const companionDamage = Math.floor(
+        (Math.floor(Math.random() * 5) + activeCompanion.attack) *
+          GameBalance.BASE_CONFIG.COMPANION_DAMAGE_BONUS
+      );
       finalDamage += companionDamage;
       setCombatLog((prev) => [
         ...prev,
         `${activeCompanion.emoji} ${activeCompanion.name} aide (+${companionDamage} dégâts) !`,
       ]);
+    }
+
+    // Gestion des streaks de victoires
+    const currentTime = Date.now();
+    if (currentTime - lastVictoryTime < 30000) {
+      // Moins de 30 secondes
+      setStreakCount((prev) => prev + 1);
+      if (streakCount > 0 && streakCount % 5 === 0) {
+        const streakBonus = Math.floor(finalDamage * 0.1 * (streakCount / 5));
+        finalDamage += streakBonus;
+        setCombatLog((prev) => [
+          ...prev,
+          `🔥 Combo x${streakCount} ! +${streakBonus} dégâts bonus !`,
+        ]);
+      }
+    } else {
+      setStreakCount(1);
     }
 
     const newEnemyHp = Math.max(0, enemyHp - finalDamage);
@@ -745,61 +1045,9 @@ function Combat({
       setPlayerHp((prev) => Math.min(maxPlayerHp, prev + healAmount));
       setCombatLog((prev) => [...prev, `🩸 Vol de Vie : +${healAmount} PV !`]);
     }
+
     if (newEnemyHp <= 0) {
-      // Victoire
-      const playerStats = getPlayerStats();
-      let luckBonus = (playerStats.luck || 0) * 5; // 5% de bonus par point de luck
-
-      // Appliquer le passif Double Gold
-      const doubleGold = passiveAbilities.find((p) => p.name === "Avarice");
-      let goldMultiplier = 1;
-      if (doubleGold) {
-        goldMultiplier = 2;
-        setCombatLog((prev) => [...prev, `💰 Avarice activée ! Or doublé !`]);
-      }
-
-      const goldGained = Math.floor(
-        currentEnemy.goldReward * (1 + luckBonus / 100) * goldMultiplier
-      );
-
-      setGold((prev) => prev + goldGained);
-      setCombatLog((prev) => [
-        ...prev,
-        `🎉 Victoire ! +${goldGained} or reçu !`,
-      ]);
-
-      // Chance de level up avec bonus d'expérience
-      const expBoost = passiveAbilities.find(
-        (p) => p.name === "Apprentissage Rapide"
-      );
-      let levelUpChance = 20;
-      if (expBoost) {
-        levelUpChance = 40; // Double les chances
-        setCombatLog((prev) => [
-          ...prev,
-          `📚 Apprentissage Rapide : chances de niveau doublées !`,
-        ]);
-      }
-
-      if (Math.random() * 100 < levelUpChance) {
-        setPlayerLevel((prev) => prev + 1);
-        setCombatLog((prev) => [
-          ...prev,
-          `📈 Niveau augmenté ! Niveau ${playerLevel + 1}`,
-        ]);
-      }
-
-      if (isInWaveMode) {
-        // Mode vague : passer à l'ennemi suivant
-        nextWaveEnemy();
-      } else {
-        // Combat individuel : terminer le combat
-        setTimeout(() => {
-          setIsInCombat(false);
-          setCurrentEnemy(null);
-          setCombatLog([]);
-        }, 2000);
-      }
+      handleVictory();
       return;
     }
 
@@ -810,10 +1058,13 @@ function Combat({
   };
   const enemyAttack = () => {
     const playerStats = getPlayerStats();
-    let damage = Math.max(
+
+    // Calcul des dégâts avec nouveau système d'équilibrage
+    const baseDamage = Math.max(
       1,
       currentEnemy.attack - Math.floor(playerStats.défense / 2)
     );
+    let damage = Math.floor(baseDamage * (0.8 + Math.random() * 0.4)); // Variabilité ±20%
 
     // Vérifier le bouclier magique
     const spellShield = passiveAbilities.find(
@@ -829,62 +1080,161 @@ function Combat({
       return;
     }
 
-    const dodge = Math.random() * 100 < (playerStats.esquive || 0) * 3;
+    // Calcul d'esquive amélioré
+    const dodgeChance = (playerStats.esquive || 0) * 2.5; // Légèrement réduit
+    const dodge = Math.random() * 100 < dodgeChance;
 
     if (dodge) {
-      setCombatLog((prev) => [...prev, `🌟 Vous esquivez l'attaque !`]);
-      return;
-    }
-
-    // Le compagnon peut aussi prendre des dégâts
-    if (activeCompanion && companionHp > 0 && Math.random() * 100 < 30) {
-      // 30% de chance que le compagnon soit touché à la place
-      const newCompanionHp = Math.max(0, companionHp - damage);
-      setCompanionHp(newCompanionHp);
       setCombatLog((prev) => [
         ...prev,
-        `🛡️ ${activeCompanion.emoji} ${activeCompanion.name} protège et prend ${damage} dégâts !`,
+        `🌟 Vous esquivez l'attaque ! (${dodgeChance.toFixed(1)}% chance)`,
       ]);
-
-      if (newCompanionHp <= 0) {
-        setCombatLog((prev) => [
-          ...prev,
-          `💀 ${activeCompanion.name} est KO !`,
-        ]);
-      }
       return;
     }
 
+    // Protection par compagnon avec système équilibré
+    if (activeCompanion && companionHp > 0) {
+      const protectionChance =
+        GameBalance.BASE_CONFIG.COMPANION_PROTECTION_CHANCE;
+      if (Math.random() * 100 < protectionChance) {
+        const reducedDamage = Math.floor(damage * 0.7); // Compagnon réduit les dégâts
+        const newCompanionHp = Math.max(0, companionHp - reducedDamage);
+        setCompanionHp(newCompanionHp);
+
+        setCombatLog((prev) => [
+          ...prev,
+          `🛡️ ${activeCompanion.emoji} ${activeCompanion.name} intervient ! Dégâts réduits à ${reducedDamage} !`,
+        ]);
+
+        if (newCompanionHp <= 0) {
+          setCombatLog((prev) => [
+            ...prev,
+            `💀 ${activeCompanion.name} est KO ! Il a vaillamment protégé son maître !`,
+          ]);
+          // Bonus de rage temporaire quand compagnon meurt
+          setCombatEffects((prev) => [
+            ...prev,
+            {
+              type: "COMPANION_RAGE",
+              duration: 3,
+              effect: "+25% dégâts",
+            },
+          ]);
+        }
+        return;
+      }
+    }
+
+    // Dégâts au joueur
     const newPlayerHp = Math.max(0, playerHp - damage);
     setPlayerHp(newPlayerHp);
+
     setCombatLog((prev) => [
       ...prev,
       `💢 ${currentEnemy.name} vous attaque pour ${damage} dégâts !`,
     ]);
     if (newPlayerHp <= 0) {
-      // Défaite
+      handleDefeat();
+    }
+  };
+
+  // Fonction de gestion de la défaite
+  const handleDefeat = () => {
+    const goldLoss = Math.floor(
+      gold * GameBalance.BASE_CONFIG.DEFEAT_GOLD_LOSS
+    );
+    setGold((prev) => Math.max(0, prev - goldLoss));
+
+    setCombatLog((prev) => [
+      ...prev,
+      `💀 Défaite ! Vous perdez ${goldLoss} or...`,
+      `🔄 Vous vous réveillez au camp avec 1 PV.`,
+    ]); // Réinitialiser les stats de combat
+    setPlayerHp(1);
+    setIsInCombat(false);
+    setCurrentEnemy(null);
+
+    // Réinitialiser les effets de combat
+    setCombatEffects([]);
+    setStreakCount(1); // Effet visuel de défaite
+    setTimeout(() => {
+      setCombatLog([]);
+    }, 3000);
+  };
+  // Fonction de gestion de la victoire
+  const handleVictory = () => {
+    const playerStats = getPlayerStats();
+    const hasAvarice = passiveAbilities.find((p) => p.name === "Avarice");
+
+    // Calculer les récompenses avec le système d'équilibrage
+    const goldReward = GameBalance.calculateGoldReward(
+      currentEnemy.goldReward || currentEnemy.baseGold,
+      playerLevel,
+      playerStats.luck || 0,
+      hasAvarice
+    );
+
+    const expReward = currentEnemy.expReward || 10;
+
+    // Appliquer les récompenses
+    setGold((prev) => prev + goldReward);
+
+    // Mettre à jour le temps de dernière victoire pour les streaks
+    setLastVictoryTime(Date.now());
+
+    setCombatLog((prev) => [
+      ...prev,
+      `🎉 Victoire ! +${goldReward} or, +${expReward} exp !`,
+    ]);
+
+    // Combat individuel terminé
+    setIsInCombat(false);
+    setCurrentEnemy(null);
+
+    // Réinitialiser les effets de combat après victoire
+    setTimeout(() => {
+      setCombatEffects([]);
+    }, 2000);
+
+    // Chance de drop de ticket de donjon
+    const ticketChance = 5; // 5% de chance de base
+    const luckBonus = (playerStats.luck || 0) * 0.8; // 0.8% par point de luck
+    const totalTicketChance = ticketChance + luckBonus;
+
+    if (Math.random() * 100 < totalTicketChance) {
+      setDungeonTickets((prev) => prev + 1);
       setCombatLog((prev) => [
         ...prev,
-        `💀 Défaite ! Vous perdez la moitié de votre or...`,
+        `🎫 Un ticket de donjon trouvé ! (${dungeonTickets + 1} au total)`,
       ]);
-      setGold((prev) => Math.floor(prev / 2));
+    } // Chance de drop d'équipement (améliorée)
+    const dropChance = currentEnemy.isElite ? 15 : 8; // Élites ont plus de chance
+    const equipmentLuckBonus = (playerStats.luck || 0) * 0.5;
 
-      setTimeout(() => {
-        if (isInWaveMode) {
-          // En mode vague, arrêter complètement le mode vague
-          stopWaveMode();
-          setCombatLog((prev) => [
-            ...prev,
-            `🌊 Mode Vagues terminé ! Vous avez survécu à ${totalKills} ennemis.`,
-          ]);
-        } else {
-          // Combat individuel
-          setIsInCombat(false);
-          setCurrentEnemy(null);
-          setCombatLog([]);
-        }
-        setPlayerHp(maxPlayerHp);
-      }, 2000);
+    if (Math.random() * 100 < dropChance + equipmentLuckBonus) {
+      // Utiliser le système d'équilibrage pour déterminer la rareté
+      const rareDropChance = GameBalance.BASE_CONFIG.DROP_RATES;
+      let rarity = "COMMON";
+
+      const roll = Math.random() * 100;
+      if (roll < rareDropChance.MYTHIC) {
+        rarity = "MYTHIC";
+      } else if (roll < rareDropChance.LEGENDARY) {
+        rarity = "LEGENDARY";
+      } else if (roll < rareDropChance.EPIC) {
+        rarity = "EPIC";
+      } else if (roll < rareDropChance.RARE) {
+        rarity = "RARE";
+      }
+
+      // Générer équipement avec la rareté déterminée
+      const equipment = generateRandomEquipment(rarity);
+      onEquipmentFound(equipment);
+
+      setCombatLog((prev) => [
+        ...prev,
+        `✨ Vous trouvez un équipement ${equipment.rarity.name} : ${equipment.name} !`,
+      ]);
     }
   };
 
@@ -946,92 +1296,122 @@ function Combat({
               onClick={heal}
               disabled={playerHp === maxPlayerHp || gold < 30}
             >
+              {" "}
               💚 Se soigner (30 or)
             </button>
           </div>
-          {/* Mode Vagues */}
-          <div className="wave-mode-section">
-            <h3>🌊 Mode Vagues</h3>
+
+          {/* Tickets de donjon */}
+          <div className="tickets-section">
+            <h3>🎫 Tickets de Donjon</h3>
             <p>
-              Affrontez des ennemis en continu avec une difficulté croissante !
+              Battez des monstres pour obtenir des tickets permettant d'accéder
+              aux donjons !
             </p>
-
-            {isInWaveMode && (
-              <div className="wave-info">
-                <div className="wave-stats">
-                  <span>🌊 Vague: {waveNumber}</span>
-                  <span>⚔️ Ennemis tués: {totalKills}</span>
-                  <span>
-                    📊 Progression: {waveProgress}/{enemiesPerWave}
-                  </span>
-                </div>
-                <div className="wave-progress-bar">
-                  <div
-                    className="wave-progress-fill"
-                    style={{
-                      width: `${(waveProgress / enemiesPerWave) * 100}%`,
-                    }}
-                  ></div>
-                </div>
+            <div className="tickets-display">
+              <span className="tickets-count">
+                🎫 Tickets possédés : <strong>{dungeonTickets}</strong>
+              </span>
+              <div className="ticket-info">
+                <small>
+                  🍀 Votre luck ({playerStats.luck || 0}) augmente les chances
+                  de drop
+                </small>
               </div>
-            )}
-
-            <div className="wave-controls">
-              {!isInWaveMode && !isInCombat ? (
-                <button
-                  className="start-wave-button"
-                  onClick={startWaveMode}
-                  disabled={playerHp <= 0}
-                >
-                  🌊 Démarrer Mode Vagues
-                </button>
-              ) : isInWaveMode ? (
-                <button className="stop-wave-button" onClick={stopWaveMode}>
-                  🛑 Arrêter Mode Vagues
-                </button>
-              ) : null}
             </div>
-          </div>{" "}
-          {!isInCombat && !isInWaveMode ? (
+          </div>
+
+          {!isInCombat ? (
             <div className="enemy-selection">
-              <h3>🎯 Choisissez votre adversaire :</h3>
-              <div className="enemies-grid">
-                {ENEMIES.map((enemy, index) => (
-                  <div key={index} className="enemy-card">
-                    <div className="enemy-info">
-                      <span className="enemy-emoji">{enemy.emoji}</span>
-                      <div className="enemy-details">
-                        <strong>{enemy.name}</strong>{" "}
-                        <div>
-                          ❤️{" "}
-                          {Math.floor(
+              <h3>🎯 Zones d'exploration :</h3>
+              <div className="zones-container">
+                {Object.entries(getEnemiesByZone()).map(
+                  ([zoneName, enemies]) => (
+                    <div key={zoneName} className="zone-section">
+                      <h4 className="zone-title">🗺️ {zoneName}</h4>
+                      <div className="enemies-list">
+                        {enemies.map((enemy, index) => {
+                          const globalIndex = ENEMIES.findIndex(
+                            (e) => e.name === enemy.name
+                          );
+                          const scaledHp = Math.floor(
                             enemy.baseHp * (1 + (playerLevel - 1) * 0.3)
-                          )}
-                        </div>
-                        <div>
-                          ⚔️{" "}
-                          {Math.floor(
+                          );
+                          const scaledAttack = Math.floor(
                             enemy.baseAttack * (1 + (playerLevel - 1) * 0.2)
-                          )}
-                        </div>
-                        <div>
-                          💰{" "}
-                          {Math.floor(
+                          );
+                          const scaledGold = Math.floor(
                             enemy.baseGold * (1 + (playerLevel - 1) * 0.5)
-                          )}{" "}
-                          or
-                        </div>
+                          );
+
+                          return (
+                            <div key={index} className="enemy-list-item">
+                              <div className="enemy-info-compact">
+                                <span className="enemy-emoji">
+                                  {enemy.emoji}
+                                </span>
+                                <div className="enemy-details-list">
+                                  <div className="enemy-name-row">
+                                    <strong>{enemy.name}</strong>
+                                    {enemy.isElite && (
+                                      <span className="elite-badge">
+                                        ⭐ Élite
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="enemy-description">
+                                    {enemy.description}
+                                  </div>
+                                  <div className="enemy-stats-compact">
+                                    <span>❤️ {scaledHp}</span>
+                                    <span>⚔️ {scaledAttack}</span>
+                                    <span>💰 {scaledGold}</span>
+                                    <span>⭐ {enemy.expReward} exp</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <button
+                                className="fight-button-compact"
+                                onClick={() => startCombat(globalIndex)}
+                                disabled={playerHp <= 0}
+                              >
+                                ⚔️ Combattre
+                              </button>
+                            </div>
+                          );
+                        })}
                       </div>
+
+                      {/* Aperçu des ennemis non débloqués dans cette zone */}
+                      {ENEMIES.filter(
+                        (e) =>
+                          e.zone === zoneName && e.unlockLevel > playerLevel
+                      ).length > 0 && (
+                        <div className="locked-enemies-preview">
+                          <h5>🔒 À débloquer :</h5>
+                          {ENEMIES.filter(
+                            (e) =>
+                              e.zone === zoneName && e.unlockLevel > playerLevel
+                          )
+                            .slice(0, 3)
+                            .map((enemy, idx) => (
+                              <div key={idx} className="locked-enemy-item">
+                                <span className="enemy-emoji-locked">
+                                  {enemy.emoji}
+                                </span>
+                                <span className="enemy-name-locked">
+                                  {enemy.name}
+                                </span>
+                                <span className="unlock-level">
+                                  Niv. {enemy.unlockLevel}
+                                </span>
+                              </div>
+                            ))}
+                        </div>
+                      )}
                     </div>
-                    <button
-                      className="fight-button"
-                      onClick={() => startCombat(index)}
-                      disabled={playerHp <= 0}
-                    >
-                      ⚔️ Combattre
-                    </button>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
             </div>
           ) : (
@@ -1090,18 +1470,37 @@ function Combat({
       )}
       {activeTab === "dungeon" && (
         <div className="dungeon-tab-content">
+          {" "}
           <div className="dungeon-info">
-            <p>💰 Coût d'entrée : 100 or</p>
+            <p>🎫 Donjons normaux : Nécessitent 1 ticket de donjon</p>
+            <p>👑 Boss ultimes : Coûtent de l'or (500-800)</p>
             <p>✨ Chance d'obtenir des équipements MYTHIQUES !</p>
             <p>🍀 Votre luck augmente les chances de drop !</p>
-          </div>
+            <div className="current-tickets">
+              <strong>🎫 Tickets possédés : {dungeonTickets}</strong>
+            </div>
+          </div>{" "}
           {!isInDungeon ? (
             <div className="boss-selection">
-              <h3>👹 Choisissez votre défi :</h3>{" "}
-              <div className="bosses-grid">
-                {DUNGEON_ENEMIES.map((boss, index) => {
+              <h3>🏰 Donjons Disponibles :</h3>
+              <div className="dungeons-list">
+                {" "}
+                {getUnlockedDungeons().map((boss, index) => {
                   const luckBonus = (playerStats.luck || 0) * 2;
-                  const entryCost = boss.entryCost || 100;
+                  const globalIndex = DUNGEON_ENEMIES.findIndex(
+                    (b) => b.name === boss.name
+                  );
+
+                  // Déterminer le coût et les conditions
+                  let costInfo, canEnter;
+                  if (boss.isUltraBoss) {
+                    const entryCost = boss.entryCost || 500;
+                    costInfo = `💰 ${entryCost} or`;
+                    canEnter = gold >= entryCost;
+                  } else {
+                    costInfo = `🎫 1 ticket`;
+                    canEnter = dungeonTickets >= 1;
+                  }
 
                   let dropInfo;
                   if (boss.isUltraBoss) {
@@ -1116,53 +1515,92 @@ function Combat({
                     )}% Céleste`;
                   } else {
                     const totalChance = boss.mythicChance + luckBonus;
-                    dropInfo = `✨ ${totalChance.toFixed(1)}% mythique`;
+                    dropInfo = `✨ ${totalChance.toFixed(1)}% Mythique`;
                   }
 
                   return (
                     <div
                       key={index}
-                      className={`boss-card ${
-                        boss.isUltraBoss ? "ultra-boss" : ""
+                      className={`dungeon-list-item ${
+                        boss.isUltraBoss ? "ultra-boss-item" : ""
                       }`}
                     >
-                      <div className="boss-info">
-                        <span className="boss-emoji">{boss.emoji}</span>
-                        <div className="boss-details">
-                          <strong>{boss.name}</strong>
-                          {boss.isUltraBoss && (
-                            <div className="ultra-boss-label">
-                              👑 BOSS ULTIME
+                      <div className="dungeon-info-compact">
+                        <div className="dungeon-header">
+                          <span className="boss-emoji-large">{boss.emoji}</span>
+                          <div className="dungeon-main-info">
+                            <div className="dungeon-name-row">
+                              <strong>{boss.name}</strong>
+                              {boss.isUltraBoss && (
+                                <span className="ultra-badge">👑 ULTIME</span>
+                              )}
                             </div>
-                          )}
-                          <div>❤️ {boss.hp} PV</div>
-                          <div>⚔️ {boss.attack} Attaque</div>
-                          <div>💰 {boss.goldReward} or</div>
-                          <div className="drop-chance">
-                            {dropInfo}
-                            {luckBonus > 0 && !boss.isUltraBoss && (
-                              <span className="luck-bonus">
-                                {" "}
-                                (+{luckBonus.toFixed(1)}%)
-                              </span>
-                            )}
+                            <div className="dungeon-zone">📍 {boss.zone}</div>
+                            <div className="dungeon-description">
+                              {boss.description}
+                            </div>
                           </div>
-                          <div className="entry-cost">
-                            🎫 Entrée: {entryCost} or
+                        </div>
+
+                        <div className="dungeon-stats-grid">
+                          <div className="stat-group">
+                            <div className="stat-item">❤️ {boss.hp} PV</div>
+                            <div className="stat-item">
+                              ⚔️ {boss.attack} Attaque
+                            </div>
+                          </div>
+                          <div className="stat-group">
+                            <div className="stat-item">
+                              💰 {boss.goldReward} or
+                            </div>
+                            <div className="stat-item">
+                              ⭐ {boss.expReward} exp
+                            </div>
+                          </div>{" "}
+                          <div className="stat-group">
+                            <div className="stat-item">{costInfo}</div>
+                            <div className="drop-info-compact">{dropInfo}</div>
                           </div>
                         </div>
                       </div>
+
                       <button
-                        className="challenge-button"
-                        onClick={() => startDungeon(index)}
-                        disabled={gold < entryCost}
+                        className={`challenge-button-compact ${
+                          boss.isUltraBoss ? "ultra-challenge" : ""
+                        }`}
+                        onClick={() => startDungeon(globalIndex)}
+                        disabled={!canEnter}
                       >
-                        {boss.isUltraBoss ? "👑 Défier l'Ultime" : "🏰 Défier"}
+                        {boss.isUltraBoss ? "👑 Défier l'Ultime" : "🏰 Entrer"}
                       </button>
                     </div>
                   );
                 })}
               </div>
+
+              {/* Donjons verrouillés */}
+              {DUNGEON_ENEMIES.filter((d) => d.unlockLevel > playerLevel)
+                .length > 0 && (
+                <div className="locked-dungeons">
+                  <h4>🔒 Donjons à débloquer :</h4>
+                  <div className="locked-dungeons-list">
+                    {DUNGEON_ENEMIES.filter(
+                      (d) => d.unlockLevel > playerLevel
+                    ).map((boss, idx) => (
+                      <div key={idx} className="locked-dungeon-item">
+                        <span className="boss-emoji-locked">{boss.emoji}</span>
+                        <div className="locked-dungeon-info">
+                          <strong>{boss.name}</strong>
+                          <div>{boss.zone}</div>
+                          <div className="unlock-requirement">
+                            Niveau {boss.unlockLevel} requis
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="dungeon-arena">

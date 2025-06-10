@@ -229,6 +229,25 @@ body {
   box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
 }
 
+.achievements-button {
+  background: linear-gradient(45deg, #f39c12, #d68910);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 20px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1em;
+  margin-left: 10px;
+}
+
+.achievements-button:hover {
+  background: linear-gradient(45deg, #d68910, #b7950b);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+}
+
 /* Modal de Combat */
 .combat-modal-overlay {
   position: fixed;

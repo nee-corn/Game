@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { GameBalance } from "../utils/GameBalance";
 import "./EquipmentForge.css";
 
 // Types de compagnons
@@ -101,12 +102,12 @@ const PASSIVE_ABILITIES = {
   },
 };
 
-// Configuration des raretés
+// Configuration des raretés équilibrées
 const RARITIES = {
   COMMON: {
     name: "Commun",
     color: "#808080",
-    chance: 50,
+    chance: 45, // Réduit de 50%
     statMultiplier: 1,
     cost: 10,
     emoji: "⚪",
@@ -114,32 +115,32 @@ const RARITIES = {
   RARE: {
     name: "Rare",
     color: "#0066ff",
-    chance: 30,
-    statMultiplier: 1.5,
-    cost: 25,
+    chance: 30, // Identique
+    statMultiplier: 1.6,
+    cost: 30,
     emoji: "🔵",
   },
   EPIC: {
     name: "Épique",
     color: "#9900ff",
-    chance: 15,
-    statMultiplier: 2.5,
-    cost: 50,
+    chance: 20, // Augmenté de 15%
+    statMultiplier: 2.4,
+    cost: 60,
     emoji: "🟣",
   },
   LEGENDARY: {
     name: "Légendaire",
     color: "#ff6600",
-    chance: 5,
-    statMultiplier: 4,
-    cost: 100,
+    chance: 4.5, // Réduit de 5%
+    statMultiplier: 3.5,
+    cost: 120,
     emoji: "🟠",
   },
   MYTHIC: {
     name: "Mythique",
     color: "#ff0080",
-    chance: 0, // Uniquement obtenu dans les donjons
-    statMultiplier: 6,
+    chance: 0.5, // Nouvelle chance minime
+    statMultiplier: 5.0,
     cost: 0,
     emoji: "💖",
   },
@@ -266,21 +267,39 @@ function EquipmentForge({
     if (!companionKey) return;
 
     const companion = COMPANION_TYPES[companionKey];
+    const currentCompanions = companions ? companions.length : 0;
 
-    if (gold < companion.cost) {
-      alert(`Il faut ${companion.cost} or pour invoquer ce compagnon !`);
+    // Coût dynamique basé sur le nombre de compagnons
+    const companionIndex = Object.keys(COMPANION_TYPES).indexOf(companionKey);
+    const dynamicCost = GameBalance.calculateCompanionCost(
+      companionIndex,
+      currentCompanions
+    );
+
+    if (gold < dynamicCost) {
+      alert(
+        `Il faut ${dynamicCost} or pour invoquer ce compagnon ! (Coût augmente avec le nombre de compagnons)`
+      );
       return;
     }
 
-    setGold((prev) => prev - companion.cost);
+    // Limite de compagnons
+    if (currentCompanions >= 5) {
+      alert("Vous avez atteint la limite de 5 compagnons actifs !");
+      return;
+    }
+
+    setGold((prev) => prev - dynamicCost);
 
     const newCompanion = {
       id: Date.now(),
       ...companion,
       level: 1,
-      hp: companion.baseHp,
-      maxHp: companion.baseHp,
-      attack: companion.baseAttack,
+      hp: companion.baseHp + Math.floor(Math.random() * 20), // Variabilité
+      maxHp: companion.baseHp + Math.floor(Math.random() * 20),
+      attack: companion.baseAttack + Math.floor(Math.random() * 10),
+      cost: dynamicCost, // Sauvegarder le coût payé
+      experience: 0,
       equipment: {
         weapon: null,
         armor: null,
@@ -291,7 +310,16 @@ function EquipmentForge({
 
     setCompanions((prev) => [...prev, newCompanion]);
     if (onCombatLog) {
-      onCombatLog(`🎉 ${companion.emoji} ${companion.name} invoqué !`);
+      onCombatLog(
+        `🎉 ${companion.emoji} ${companion.name} invoqué pour ${dynamicCost} or !`
+      );
+    }
+
+    // Achievement check
+    if (currentCompanions + 1 === 5) {
+      alert(
+        "🏆 Achievement débloqué : Maître des Compagnons ! Vous avez 5 compagnons actifs !"
+      );
     }
   };
 
@@ -314,17 +342,26 @@ function EquipmentForge({
       onCombatLog(`🌟 Capacité ${ability.emoji} ${ability.name} apprise !`);
     }
   };
-
   const forgeEquipment = () => {
-    const forgeCost = 20;
+    const currentForgeCount = parseInt(
+      localStorage.getItem("forgeCount") || "0"
+    );
+    const playerLevel = parseInt(localStorage.getItem("playerLevel") || "1");
+    const forgeCost = GameBalance.calculateForgeCost(
+      playerLevel,
+      currentForgeCount
+    );
 
     if (gold < forgeCost) {
-      alert("Pas assez d'or pour forger ! (Coût: 20 or)");
+      alert(`Pas assez d'or pour forger ! (Coût: ${forgeCost} or)`);
       return;
     }
 
     setIsForging(true);
     setGold((prev) => prev - forgeCost);
+
+    // Sauvegarder le compte de forge
+    localStorage.setItem("forgeCount", (currentForgeCount + 1).toString());
 
     setTimeout(() => {
       const rarity = determineRarity();
@@ -334,7 +371,12 @@ function EquipmentForge({
         ];
       const equipmentType = EQUIPMENT_TYPES[equipmentTypeKey];
 
-      const stats = generateStats(equipmentType, rarity);
+      // Utiliser le nouveau système de génération équilibré
+      const stats = GameBalance.generateBalancedStats(
+        equipmentType,
+        rarity.key,
+        playerLevel
+      );
       const value = calculateValue(stats, rarity);
 
       const newEquipment = {
@@ -345,13 +387,23 @@ function EquipmentForge({
         stats,
         value,
         emoji: equipmentType.emoji,
+        level: playerLevel, // Marquer le niveau de création
+        forgeBonus:
+          currentForgeCount > 50 ? Math.floor(currentForgeCount / 50) : 0,
       };
-
       setLastForgedItem(newEquipment);
       onEquipmentForged(newEquipment);
       setIsForging(false);
+
+      // Notification d'amélioration
+      if (currentForgeCount > 0 && currentForgeCount % 10 === 0) {
+        alert(
+          `🎉 Forge Maître ! Vous avez forgé ${currentForgeCount} objets ! Coût légèrement augmenté.`
+        );
+      }
     }, 2000);
   };
+
   return (
     <div className="equipment-forge">
       <h2>🔥 Forge & Invocations</h2>
