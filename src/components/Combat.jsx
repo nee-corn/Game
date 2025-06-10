@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { GameBalance } from "../utils/GameBalance";
+import VictoryScreen from "./VictoryScreen";
 import "./Combat.css";
 
 // Système d'ennemis progressifs avec déverrouillage
@@ -357,6 +358,26 @@ const ULTRA_BOSS = {
   maxDefeats: 5, // Doit être tué 5 fois
 };
 
+// Ajout : Types de matériaux spéciaux pour l'amélioration d'équipement
+const SPECIAL_MATERIALS = {
+  BLUE: {
+    name: "Cristal Bleu",
+    color: "#3498db",
+    description: "+1 ligne de stats sur un équipement",
+    lines: 1,
+    dropChance: 8, // %
+    emoji: "🔷",
+  },
+  LEGENDARY: {
+    name: "Essence Légendaire",
+    color: "#f1c40f",
+    description: "+3 lignes de stats sur un équipement",
+    lines: 3,
+    dropChance: 2, // %
+    emoji: "🌟",
+  },
+};
+
 function Combat({
   equippedItems,
   gold,
@@ -375,6 +396,8 @@ function Combat({
   setExperience,
   gameStats,
   setGameStats,
+  specialMaterials = {},
+  onSpecialMaterialFound,
 }) {
   // État des onglets
   const [activeTab, setActiveTab] = useState("combat");
@@ -384,6 +407,10 @@ function Combat({
   const [enemyHp, setEnemyHp] = useState(0);
   const [isInCombat, setIsInCombat] = useState(false);
   const [combatLog, setCombatLog] = useState([]);
+
+  // État pour l'écran de résultats
+  const [showVictoryScreen, setShowVictoryScreen] = useState(false);
+  const [victoryRewards, setVictoryRewards] = useState(null);
   const [maxPlayerHp, setMaxPlayerHp] = useState(100);
 
   // États du donjon
@@ -876,31 +903,44 @@ function Combat({
       // Récompenses d'or et d'XP
       setGold((prev) => prev + currentBoss.goldReward);
 
-      let bossExpReward = currentBoss.expReward || 50;
+      // Gain d'XP exponentiel selon le niveau de l'ennemi
+      // On suppose que currentEnemy est défini et a un champ unlockLevel
+      let expReward = currentBoss.expReward || 10;
+      const enemyLevel = currentBoss.unlockLevel || 1;
+      // Formule exponentielle : base * (1.25 ^ (niveau ennemi - 1))
+      expReward = Math.floor(expReward * Math.pow(1.25, enemyLevel - 1));
       if (hasExpBoost) {
-        bossExpReward = Math.floor(bossExpReward * 2);
+        expReward = Math.floor(expReward * 2);
       }
-
-      // Gérer l'expérience et la montée de niveau
-      const newTotalExperience = experience + bossExpReward;
+      setGold((prev) => prev + goldReward);
+      const newTotalExperience = experience + expReward;
       handleLevelUp(newTotalExperience);
-
-      // Mettre à jour les stats de jeu
       setGameStats((prev) => ({
         ...prev,
         totalCombats: prev.totalCombats + 1,
         totalVictories: prev.totalVictories + 1,
-        bossesDefeated: prev.bossesDefeated + 1,
-        totalGoldEarned: prev.totalGoldEarned + currentBoss.goldReward,
+        totalGoldEarned: prev.totalGoldEarned + goldReward,
       }));
-
-      setDungeonLog((prev) =>
+      setLastVictoryTime(Date.now());
+      setCombatLog((prev) =>
         [
           ...prev,
-          `🎉 Victoire épique ! +${currentBoss.goldReward} or, +${bossExpReward} exp !`,
+          `🎉 Victoire ! +${goldReward} or, +${expReward} exp !`,
           hasExpBoost ? `📚 Apprentissage Rapide : XP doublée !` : null,
         ].filter(Boolean)
       );
+      // Drop de matériaux spéciaux
+      Object.values(SPECIAL_MATERIALS).forEach((mat) => {
+        if (Math.random() * 100 < mat.dropChance) {
+          // Ajout dans l'inventaire de matériaux spéciaux (à adapter selon votre système d'inventaire)
+          // Par exemple : setSpecialMaterials((prev) => [...prev, mat]);
+          setCombatLog((prev) => [
+            ...prev,
+            `${mat.emoji} Vous trouvez un ${mat.name} ! (${mat.description})`,
+          ]);
+          // TODO : Ajouter le stockage réel du matériau dans l'inventaire du joueur
+        }
+      });
 
       // Vérification des drops spéciaux
       if (currentBoss.isUltraBoss) {
@@ -1247,65 +1287,46 @@ function Combat({
       hasAvarice
     );
 
+    // Gain d'XP exponentiel selon le niveau de l'ennemi
+    // On suppose que currentEnemy est défini et a un champ unlockLevel
     let expReward = currentEnemy.expReward || 10;
-
-    // Appliquer le bonus d'XP si disponible
+    const enemyLevel = currentEnemy.unlockLevel || 1;
+    // Formule exponentielle : base * (1.25 ^ (niveau ennemi - 1))
+    expReward = Math.floor(expReward * Math.pow(1.25, enemyLevel - 1));
     if (hasExpBoost) {
-      expReward = Math.floor(expReward * 2); // Double XP avec Apprentissage Rapide
+      expReward = Math.floor(expReward * 2);
     }
-
-    // Appliquer les récompenses
     setGold((prev) => prev + goldReward);
-
-    // Gérer l'expérience et la montée de niveau
     const newTotalExperience = experience + expReward;
     handleLevelUp(newTotalExperience);
-
-    // Mettre à jour les statistiques de jeu
     setGameStats((prev) => ({
       ...prev,
       totalCombats: prev.totalCombats + 1,
       totalVictories: prev.totalVictories + 1,
       totalGoldEarned: prev.totalGoldEarned + goldReward,
     }));
+    setLastVictoryTime(Date.now()); // Drop de matériaux spéciaux
+    const droppedMaterials = [];
+    Object.values(SPECIAL_MATERIALS).forEach((mat) => {
+      if (Math.random() * 100 < mat.dropChance) {
+        droppedMaterials.push(mat);
+        // Ajouter le matériau à l'inventaire des matériaux spéciaux
+        if (onSpecialMaterialFound) {
+          onSpecialMaterialFound(mat.name, 1);
+        }
+        setCombatLog((prev) => [
+          ...prev,
+          `${mat.emoji} Vous trouvez un ${mat.name} ! (${mat.description})`,
+        ]);
+      }
+    });
 
-    // Mettre à jour le temps de dernière victoire pour les streaks
-    setLastVictoryTime(Date.now());
+    // Chance de drop d'équipement
+    let droppedEquipment = null;
+    const equipDropChance = currentEnemy.isElite ? 15 : 8;
+    const equipLuckBonus = (playerStats.luck || 0) * 0.5;
 
-    setCombatLog((prev) =>
-      [
-        ...prev,
-        `🎉 Victoire ! +${goldReward} or, +${expReward} exp !`,
-        hasExpBoost ? `📚 Apprentissage Rapide : XP doublée !` : null,
-      ].filter(Boolean)
-    );
-
-    // Combat individuel terminé
-    setIsInCombat(false);
-    setCurrentEnemy(null);
-
-    // Réinitialiser les effets de combat après victoire
-    setTimeout(() => {
-      setCombatEffects([]);
-    }, 2000);
-
-    // Chance de drop de ticket de donjon
-    const ticketChance = 5; // 5% de chance de base
-    const luckBonus = (playerStats.luck || 0) * 0.8; // 0.8% par point de luck
-    const totalTicketChance = ticketChance + luckBonus;
-
-    if (Math.random() * 100 < totalTicketChance) {
-      setDungeonTickets((prev) => prev + 1);
-      setCombatLog((prev) => [
-        ...prev,
-        `🎫 Un ticket de donjon trouvé ! (${dungeonTickets + 1} au total)`,
-      ]);
-    } // Chance de drop d'équipement (améliorée)
-    const dropChance = currentEnemy.isElite ? 15 : 8; // Élites ont plus de chance
-    const equipmentLuckBonus = (playerStats.luck || 0) * 0.5;
-
-    if (Math.random() * 100 < dropChance + equipmentLuckBonus) {
-      // Utiliser le système d'équilibrage pour déterminer la rareté
+    if (Math.random() * 100 < equipDropChance + equipLuckBonus) {
       const rareDropChance = GameBalance.BASE_CONFIG.DROP_RATES;
       let rarity = "COMMON";
 
@@ -1320,15 +1341,41 @@ function Combat({
         rarity = "RARE";
       }
 
-      // Générer équipement avec la rareté déterminée
-      const equipment = generateRandomEquipment(rarity);
-      onEquipmentFound(equipment);
+      droppedEquipment = generateRandomEquipment(rarity);
+      onEquipmentFound(droppedEquipment);
+    }
 
+    // Chance de drop de ticket de donjon
+    const dungeonTicketChance = 5;
+    const ticketLuckBonus = (playerStats.luck || 0) * 0.8;
+    const totalTicketChance = dungeonTicketChance + ticketLuckBonus;
+
+    if (Math.random() * 100 < totalTicketChance) {
+      setDungeonTickets((prev) => prev + 1);
       setCombatLog((prev) => [
         ...prev,
-        `✨ Vous trouvez un équipement ${equipment.rarity.name} : ${equipment.name} !`,
+        `🎫 Un ticket de donjon trouvé ! (${dungeonTickets + 1} au total)`,
       ]);
     }
+
+    // Préparer les données de récompenses pour l'écran de victoire
+    setVictoryRewards({
+      enemy: currentEnemy,
+      goldReward,
+      expReward,
+      hasExpBoost,
+      droppedMaterials,
+      droppedEquipment,
+      playerLevel: playerLevel,
+      newLevel: playerLevel,
+    });
+
+    // Combat individuel terminé
+    setIsInCombat(false);
+    setShowVictoryScreen(true); // Réinitialiser les effets de combat après victoire
+    setTimeout(() => {
+      setCombatEffects([]);
+    }, 2000);
   };
 
   const heal = () => {
@@ -1341,6 +1388,27 @@ function Combat({
     setGold((prev) => prev - healCost);
     setPlayerHp(maxPlayerHp);
     setCombatLog((prev) => [...prev, `💚 Vous vous soignez complètement !`]);
+  };
+
+  // Fonctions pour l'écran de victoire
+  const closeVictoryScreen = () => {
+    setShowVictoryScreen(false);
+    setVictoryRewards(null);
+    setCurrentEnemy(null);
+    setCombatLog([]);
+  };
+  const restartSameCombat = () => {
+    if (victoryRewards && victoryRewards.enemy) {
+      setShowVictoryScreen(false);
+      setVictoryRewards(null);
+      // Relancer le même combat
+      const enemyIndex = ENEMIES.findIndex(
+        (e) => e.name === victoryRewards.enemy.name
+      );
+      if (enemyIndex !== -1) {
+        startCombat(enemyIndex);
+      }
+    }
   };
 
   const playerStats = getPlayerStats();
@@ -1805,6 +1873,14 @@ function Combat({
             </button>
           </div>
         </div>
+      )}{" "}
+      {/* Écran de victoire */}
+      {showVictoryScreen && victoryRewards && (
+        <VictoryScreen
+          victoryRewards={victoryRewards}
+          onClose={closeVictoryScreen}
+          onRestartCombat={restartSameCombat}
+        />
       )}
     </div>
   );

@@ -17,11 +17,13 @@ function Inventory({
   const [showItemModal, setShowItemModal] = useState(false);
   const [showEquipModal, setShowEquipModal] = useState(false);
   const [activeCompanions, setActiveCompanions] = useState([]);
+  const [previewTarget, setPreviewTarget] = useState("player"); // "player" ou ID du compagnon
   const maxActiveCompanions = 5;
 
   const openItemModal = (item, isEquipped = false) => {
     setSelectedItem({ ...item, isEquipped });
     setShowItemModal(true);
+    setPreviewTarget("player"); // Reset à "player" par défaut
   };
   const getComparisonItem = () => {
     if (!selectedItem || selectedItem.isEquipped) return null;
@@ -37,9 +39,20 @@ function Inventory({
       }
     }
 
-    // Sinon, comparaison pour le joueur
-    const equippedOfSameType = equippedItems[selectedItem.type.name];
-    return equippedOfSameType || null;
+    // Utiliser la cible de prévisualisation sélectionnée
+    if (previewTarget === "player") {
+      const equippedOfSameType = equippedItems[selectedItem.type.name];
+      return equippedOfSameType || null;
+    } else {
+      // Compagnon spécifique sélectionné pour la prévisualisation
+      const companion = companions.find((c) => c.id === previewTarget);
+      if (companion) {
+        const slotType = getSlotTypeFromItem(selectedItem);
+        return companion.equipment[slotType] || null;
+      }
+    }
+
+    return null;
   };
 
   const getSlotTypeFromItem = (item) => {
@@ -65,11 +78,11 @@ function Inventory({
         difference > 0 ? "positive" : difference < 0 ? "negative" : "neutral",
     };
   };
-
   const closeItemModal = () => {
     setSelectedItem(null);
     setShowItemModal(false);
     setShowEquipModal(false);
+    setPreviewTarget("player"); // Reset la cible de prévisualisation
   };
   const handleSell = () => {
     // Créer une copie de l'item avec toutes les informations nécessaires pour la vente
@@ -255,6 +268,7 @@ function Inventory({
 
   return (
     <div className="inventory-container">
+      {" "}
       <div className="tabs">
         <button
           className={`tab ${activeTab === "inventory" ? "active" : ""}`}
@@ -274,8 +288,13 @@ function Inventory({
         >
           👥 Compagnons ({companions ? companions.length : 0})
         </button>
+        <button
+          className={`tab ${activeTab === "guide" ? "active" : ""}`}
+          onClick={() => setActiveTab("guide")}
+        >
+          📚 Guide Combat
+        </button>
       </div>
-
       <div className="tab-content">
         {activeTab === "inventory" && (
           <div className="inventory-tab">
@@ -610,8 +629,164 @@ function Inventory({
             )}
           </div>
         )}
-      </div>
+        {activeTab === "guide" && (
+          <div className="guide-tab">
+            <div className="combat-guide">
+              <h2>📚 Guide du Système de Combat avec Compagnons</h2>
 
+              <div className="guide-section">
+                <h3>🤺 Combat de Base</h3>
+                <div className="guide-content">
+                  <p>
+                    Le combat se déroule entre vous et les ennemis, avec l'aide
+                    potentielle de vos compagnons actifs.
+                  </p>
+                  <ul>
+                    <li>
+                      <strong>Attaque :</strong> Vos dégâts dépendent de votre
+                      équipement et bonus
+                    </li>
+                    <li>
+                      <strong>Défense :</strong> Réduit les dégâts subis
+                    </li>
+                    <li>
+                      <strong>Esquive :</strong> Chance d'éviter complètement
+                      une attaque
+                    </li>
+                    <li>
+                      <strong>Critique :</strong> Chance d'infliger +50% de
+                      dégâts
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="guide-section">
+                <h3>👥 Système de Compagnons</h3>
+                <div className="guide-content">
+                  <p>
+                    <strong>Un seul compagnon actif en combat !</strong>{" "}
+                    Choisissez bien lequel activer.
+                  </p>
+
+                  <div className="companion-mechanics">
+                    <div className="mechanic-card">
+                      <h4>🛡️ Protection (25% de chance)</h4>
+                      <p>
+                        Votre compagnon peut intervenir pour vous protéger,
+                        réduisant les dégâts de 30%
+                      </p>
+                    </div>
+
+                    <div className="mechanic-card">
+                      <h4>⚔️ Assistance d'Attaque</h4>
+                      <p>
+                        25% des dégâts de votre compagnon sont ajoutés à vos
+                        attaques
+                      </p>
+                    </div>
+
+                    <div className="mechanic-card">
+                      <h4>📈 Bonus Passifs</h4>
+                      <p>
+                        Chaque type de compagnon apporte des bonus permanents :
+                      </p>
+                      <ul>
+                        <li>
+                          <strong>🛡️ Guerrier :</strong> +10 Défense
+                        </li>
+                        <li>
+                          <strong>🔮 Mage :</strong> +15 Dégâts magiques
+                        </li>
+                        <li>
+                          <strong>🗡️ Assassin :</strong> +15 Critique
+                        </li>
+                        <li>
+                          <strong>💚 Guérisseur :</strong> Régénération
+                          automatique
+                        </li>
+                        <li>
+                          <strong>🔥 Berserker :</strong> +10 Esquive
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="guide-section">
+                <h3>⚡ Mécaniques Avancées</h3>
+                <div className="guide-content">
+                  <div className="advanced-mechanics">
+                    <div className="mechanic-card">
+                      <h4>💀 Mort du Compagnon</h4>
+                      <p>
+                        Si votre compagnon meurt, vous obtenez un bonus de rage
+                        temporaire (+25% dégâts pendant 3 tours)
+                      </p>
+                    </div>
+
+                    <div className="mechanic-card">
+                      <h4>💚 Régénération (Guérisseur)</h4>
+                      <p>
+                        Le compagnon Guérisseur régénère automatiquement des PV
+                        au fil du temps
+                      </p>
+                    </div>
+
+                    <div className="mechanic-card">
+                      <h4>🎯 Stratégie</h4>
+                      <p>
+                        • Équipez vos compagnons pour maximiser leurs stats
+                        <br />
+                        • Activez le bon compagnon selon la situation
+                        <br />• Un compagnion mort ne peut plus vous protéger !
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="guide-section">
+                <h3>🎮 Conseils de Jeu</h3>
+                <div className="guide-content">
+                  <div className="tips-grid">
+                    <div className="tip-card">
+                      <h4>💡 Gestion des Compagnons</h4>
+                      <p>
+                        • Vous pouvez avoir 5 compagnons maximum
+                        <br />
+                        • Seul UN compagnon est actif en combat
+                        <br />• Changez de compagnon actif selon vos besoins
+                      </p>
+                    </div>
+
+                    <div className="tip-card">
+                      <h4>⚔️ Optimisation de Combat</h4>
+                      <p>
+                        • Équipez vos compagnons avec de bons objets
+                        <br />
+                        • Utilisez le Guérisseur pour la survie
+                        <br />• Utilisez l'Assassin pour les dégâts critiques
+                      </p>
+                    </div>
+
+                    <div className="tip-card">
+                      <h4>📊 Prévisualisation</h4>
+                      <p>
+                        • Utilisez la prévisualisation d'équipement
+                        <br />
+                        • Comparez les stats entre compagnons
+                        <br />• Optimisez chaque slot d'équipement
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
       {/* Modal de sélection d'équipement */}
       {showEquipModal && selectedItem && (
         <div className="modal-overlay" onClick={closeItemModal}>
@@ -671,7 +846,6 @@ function Inventory({
           </div>
         </div>
       )}
-
       {/* Modal d'informations d'objet */}
       {showItemModal && selectedItem && !showEquipModal && (
         <div className="modal-overlay" onClick={closeItemModal}>
@@ -692,9 +866,45 @@ function Inventory({
               <button className="close-button" onClick={closeItemModal}>
                 ✕
               </button>
-            </div>
-
+            </div>{" "}
             <div className="modal-content">
+              {/* Sélecteur de cible pour la prévisualisation */}
+              {!selectedItem.isEquipped && (
+                <div className="preview-target-selector">
+                  <h4>🎯 Prévisualiser pour :</h4>
+                  <div className="preview-options">
+                    <button
+                      className={`preview-option ${
+                        previewTarget === "player" ? "active" : ""
+                      }`}
+                      onClick={() => setPreviewTarget("player")}
+                    >
+                      <span className="option-icon">🤺</span>
+                      <span className="option-label">Joueur</span>
+                    </button>
+                    {companions && companions.length > 0 && (
+                      <>
+                        {companions.map((companion) => (
+                          <button
+                            key={companion.id}
+                            className={`preview-option ${
+                              previewTarget === companion.id ? "active" : ""
+                            }`}
+                            onClick={() => setPreviewTarget(companion.id)}
+                          >
+                            <span className="option-icon">
+                              {companion.emoji}
+                            </span>
+                            <span className="option-label">
+                              {companion.name}
+                            </span>
+                          </button>
+                        ))}
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
               <div className="item-stats-detailed">
                 <h4>📊 Statistiques :</h4>
                 {Object.entries(selectedItem.stats).map(([stat, value]) => {
@@ -718,11 +928,16 @@ function Inventory({
                     </div>
                   );
                 })}
-              </div>
-
+              </div>{" "}
               {!selectedItem.isEquipped && getComparisonItem() && (
                 <div className="comparison-section">
-                  <h4>🔄 Comparaison avec l'équipement actuel :</h4>
+                  <h4>
+                    🔄 Comparaison avec l'équipement actuel de{" "}
+                    {previewTarget === "player"
+                      ? "votre personnage"
+                      : companions.find((c) => c.id === previewTarget)?.name}
+                    :
+                  </h4>
                   <div className="comparison-container">
                     <div className="comparison-current">
                       <h5>📦 Actuellement équipé :</h5>
@@ -792,12 +1007,10 @@ function Inventory({
                   </div>
                 </div>
               )}
-
               <div className="item-value-display">
                 💰 Valeur : {selectedItem.value} or
               </div>
             </div>
-
             <div className="modal-actions">
               {!selectedItem.isEquipped ? (
                 <>

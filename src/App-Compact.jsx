@@ -12,7 +12,8 @@ import "./components/CompactLayout.css";
 import "./App.css";
 
 function App() {
-  // États de jeu initiaux  const [inventory, setInventory] = useState([]);
+  // États de jeu initiaux
+  const [inventory, setInventory] = useState([]);
   const [equippedItems, setEquippedItems] = useState({});
   const [gold, setGold] = useState(100);
   const [combatInProgress, setCombatInProgress] = useState(false);
@@ -21,7 +22,6 @@ function App() {
   const [companions, setCompanions] = useState([]);
   const [passiveAbilities, setPassiveAbilities] = useState([]);
   const [dungeonTickets, setDungeonTickets] = useState(0);
-  const [specialMaterials, setSpecialMaterials] = useState({});
 
   // États pour les statistiques
   const [gameStats, setGameStats] = useState({
@@ -66,7 +66,6 @@ function App() {
         setPlayerLevel(mergedData.playerLevel || 1);
         setExperience(mergedData.experience || 0);
         setDungeonTickets(mergedData.dungeonTickets || 0);
-        setSpecialMaterials(mergedData.specialMaterials || {});
         setGameStats(mergedData.stats || SaveSystem.getDefaultGameData().stats);
         setGameSettings(
           mergedData.settings || SaveSystem.getDefaultGameData().settings
@@ -81,6 +80,7 @@ function App() {
 
     loadSaveData();
   }, []);
+
   // Préparer les données pour la sauvegarde
   const gameData = {
     gold,
@@ -91,7 +91,6 @@ function App() {
     playerLevel,
     experience,
     dungeonTickets,
-    specialMaterials,
     stats: gameStats,
     settings: gameSettings,
   };
@@ -120,6 +119,7 @@ function App() {
       console.log(`Multiplicateur d'or: x${reward.goldMultiplier}`);
     }
   };
+
   // Fonction pour réinitialiser le jeu
   const resetGame = () => {
     if (
@@ -136,7 +136,6 @@ function App() {
       setPassiveAbilities(defaultData.passiveAbilities);
       setPlayerLevel(defaultData.playerLevel);
       setExperience(defaultData.experience);
-      setSpecialMaterials({});
       setGameStats(defaultData.stats);
       setGameSettings(defaultData.settings);
     }
@@ -263,6 +262,7 @@ function App() {
       })
     );
   };
+
   const getSlotTypeFromItem = (item) => {
     const typeMap = {
       Arme: "weapon",
@@ -271,27 +271,6 @@ function App() {
       Bottes: "boots",
     };
     return typeMap[item.type.name] || "weapon";
-  };
-
-  // Fonctions pour les matériaux spéciaux
-  const addSpecialMaterial = (materialType, quantity = 1) => {
-    setSpecialMaterials((prev) => ({
-      ...prev,
-      [materialType]: (prev[materialType] || 0) + quantity,
-    }));
-  };
-
-  const useSpecialMaterial = (materialType, quantity = 1) => {
-    setSpecialMaterials((prev) => {
-      const currentAmount = prev[materialType] || 0;
-      if (currentAmount >= quantity) {
-        return {
-          ...prev,
-          [materialType]: currentAmount - quantity,
-        };
-      }
-      return prev;
-    });
   };
 
   return (
@@ -316,19 +295,10 @@ function App() {
           <div className="stat-item">
             <span>👥</span>
             <span>{companions.length}</span>
-          </div>{" "}
+          </div>
           <div className="stat-item">
             <span>🎒</span>
             <span>{inventory.length}</span>
-          </div>
-          <div className="stat-item" title="Matériaux Spéciaux">
-            <span>🔷</span>
-            <span>
-              {Object.values(specialMaterials).reduce(
-                (sum, count) => sum + count,
-                0
-              )}
-            </span>
           </div>
         </div>
 
@@ -402,6 +372,7 @@ function App() {
             />
           </div>
         )}
+
         {activeMainTab === "inventory" && (
           <div className="content-single">
             <Inventory
@@ -416,7 +387,8 @@ function App() {
               onUnequipFromCompanion={unequipFromCompanion}
             />
           </div>
-        )}{" "}
+        )}
+
         {activeMainTab === "combat" && (
           <div className="content-single">
             <Combat
@@ -437,8 +409,6 @@ function App() {
               setExperience={setExperience}
               gameStats={gameStats}
               setGameStats={setGameStats}
-              specialMaterials={specialMaterials}
-              onSpecialMaterialFound={addSpecialMaterial}
             />
           </div>
         )}

@@ -12,16 +12,21 @@ import "./components/CompactLayout.css";
 import "./App.css";
 
 function App() {
-  // États de jeu initiaux  const [inventory, setInventory] = useState([]);
+  // États de jeu initiaux
+  const [inventory, setInventory] = useState([]);
   const [equippedItems, setEquippedItems] = useState({});
   const [gold, setGold] = useState(100);
+  const [showCombatModal, setShowCombatModal] = useState(false);
+  const [showAchievementsModal, setShowAchievementsModal] = useState(false);
   const [combatInProgress, setCombatInProgress] = useState(false);
   const [playerLevel, setPlayerLevel] = useState(1);
   const [experience, setExperience] = useState(0);
+  // États pour les compagnons et passifs
   const [companions, setCompanions] = useState([]);
   const [passiveAbilities, setPassiveAbilities] = useState([]);
+
+  // État pour les tickets de donjon
   const [dungeonTickets, setDungeonTickets] = useState(0);
-  const [specialMaterials, setSpecialMaterials] = useState({});
 
   // États pour les statistiques
   const [gameStats, setGameStats] = useState({
@@ -34,22 +39,20 @@ function App() {
     maxWaveReached: 1,
     playtimeMinutes: 0,
   });
-
   // États pour les paramètres
   const [gameSettings, setGameSettings] = useState({
     autoSave: true,
     soundEnabled: true,
     animationsEnabled: true,
   });
-
+  
   // État pour la navigation principale
   const [activeMainTab, setActiveMainTab] = useState("forge");
-
-  // États pour les modales
+  
+  // États pour la sauvegarde
   const [isLoaded, setIsLoaded] = useState(false);
   const [showWelcomeBack, setShowWelcomeBack] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
-  const [showAchievementsModal, setShowAchievementsModal] = useState(false);
 
   // Charger la sauvegarde au démarrage
   useEffect(() => {
@@ -57,7 +60,8 @@ function App() {
       const savedData = SaveSystem.loadGame();
 
       if (savedData) {
-        const mergedData = SaveSystem.mergeWithDefaults(savedData);
+        // Fusionner avec les données par défaut pour compatibilité
+        const mergedData = SaveSystem.mergeWithDefaults(savedData); // Charger les données
         setGold(mergedData.gold || 100);
         setInventory(mergedData.inventory || []);
         setEquippedItems(mergedData.equippedItems || {});
@@ -66,14 +70,18 @@ function App() {
         setPlayerLevel(mergedData.playerLevel || 1);
         setExperience(mergedData.experience || 0);
         setDungeonTickets(mergedData.dungeonTickets || 0);
-        setSpecialMaterials(mergedData.specialMaterials || {});
         setGameStats(mergedData.stats || SaveSystem.getDefaultGameData().stats);
         setGameSettings(
           mergedData.settings || SaveSystem.getDefaultGameData().settings
         );
 
+        // Afficher message de bienvenue
         setShowWelcomeBack(true);
         setTimeout(() => setShowWelcomeBack(false), 3000);
+
+        console.log("🎮 Partie chargée avec succès !");
+      } else {
+        console.log("🆕 Nouvelle partie !");
       }
 
       setIsLoaded(true);
@@ -91,7 +99,6 @@ function App() {
     playerLevel,
     experience,
     dungeonTickets,
-    specialMaterials,
     stats: gameStats,
     settings: gameSettings,
   };
@@ -101,6 +108,13 @@ function App() {
     gameData,
     gameSettings.autoSave && isLoaded
   );
+  // Fonctions pour mettre à jour les statistiques
+  const updateStats = (statUpdates) => {
+    setGameStats((prev) => ({
+      ...prev,
+      ...statUpdates,
+    }));
+  };
 
   // Fonction pour réclamer les récompenses d'achievements
   const handleRewardClaimed = (reward) => {
@@ -108,27 +122,33 @@ function App() {
       setGold((prev) => prev + reward.gold);
     }
     if (reward.masteryPoints) {
+      // TODO: Implémenter les points de maîtrise quand le système sera créé
       console.log(`Reçu ${reward.masteryPoints} points de maîtrise`);
     }
     if (reward.inventorySlots) {
+      // TODO: Implémenter l'extension d'inventaire quand nécessaire
       console.log(`+${reward.inventorySlots} emplacements d'inventaire`);
     }
     if (reward.unlockPrestige) {
+      // TODO: Implémenter le système de prestige
       console.log("Système de prestige débloqué !");
     }
     if (reward.goldMultiplier) {
+      // TODO: Appliquer le multiplicateur d'or permanent
       console.log(`Multiplicateur d'or: x${reward.goldMultiplier}`);
     }
   };
+
   // Fonction pour réinitialiser le jeu
   const resetGame = () => {
     if (
       window.confirm(
-        "⚠️ Êtes-vous sûr de vouloir recommencer une nouvelle partie ?"
+        "⚠️ Êtes-vous sûr de vouloir recommencer une nouvelle partie ? Toute progression sera perdue !"
       )
     ) {
       SaveSystem.deleteSave();
       const defaultData = SaveSystem.getDefaultGameData();
+
       setGold(defaultData.gold);
       setInventory(defaultData.inventory);
       setEquippedItems(defaultData.equippedItems);
@@ -136,13 +156,14 @@ function App() {
       setPassiveAbilities(defaultData.passiveAbilities);
       setPlayerLevel(defaultData.playerLevel);
       setExperience(defaultData.experience);
-      setSpecialMaterials({});
       setGameStats(defaultData.stats);
       setGameSettings(defaultData.settings);
+
+      console.log("🔄 Nouvelle partie commencée !");
     }
   };
 
-  // Sauvegarde avant fermeture
+  // Sauvegarde avant fermeture de l'onglet
   useEffect(() => {
     const handleBeforeUnload = () => {
       if (isLoaded) {
@@ -154,12 +175,12 @@ function App() {
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [gameData, isLoaded]);
 
-  // Screen de chargement
+  // Ne pas afficher le jeu tant qu'il n'est pas chargé
   if (!isLoaded) {
     return (
       <div className="loading-screen">
         <div className="loading-content">
-          <h1>🔨 MiniEquip</h1>
+          <h1>🔨 Forge d'Équipements</h1>
           <div className="loading-spinner">⚙️</div>
           <p>Chargement de votre aventure...</p>
         </div>
@@ -167,17 +188,20 @@ function App() {
     );
   }
 
-  // Fonctions d'inventaire
   const addToInventory = (equipment) => {
     setInventory((prev) => [...prev, equipment]);
   };
 
-  const sellItem = (item, isEquipped = false) => {
+  const handleEquipmentFound = (equipment) => {
+    addToInventory(equipment);
+  };
+  const sellEquipment = (item, isEquipped = false) => {
     const sellPrice = Math.floor(item.value * 0.7);
     setGold((prev) => prev + sellPrice);
 
     if (isEquipped) {
       if (item.companionId) {
+        // Objet équipé sur un compagnon - le retirer de l'équipement du compagnon
         setCompanions((prev) =>
           prev.map((c) => {
             if (c.id === item.companionId) {
@@ -189,6 +213,7 @@ function App() {
           })
         );
       } else {
+        // Objet équipé sur le joueur
         setEquippedItems((prev) => {
           const newEquipped = { ...prev };
           delete newEquipped[item.type.name];
@@ -196,48 +221,62 @@ function App() {
         });
       }
     } else {
+      // Objet dans l'inventaire
       setInventory((prev) => prev.filter((invItem) => invItem.id !== item.id));
     }
   };
 
   const equipItem = (item) => {
+    // Retire l'objet de l'inventaire
     setInventory((prev) => prev.filter((invItem) => invItem.id !== item.id));
 
+    // Si il y a déjà un objet équipé de ce type, le remet dans l'inventaire
     if (equippedItems[item.type.name]) {
       setInventory((prev) => [...prev, equippedItems[item.type.name]]);
     }
 
+    // Équipe le nouvel objet
     setEquippedItems((prev) => ({
       ...prev,
       [item.type.name]: item,
     }));
   };
-
   const unequipItem = (item) => {
+    // Retire l'objet des équipements
     setEquippedItems((prev) => {
       const newEquipped = { ...prev };
       delete newEquipped[item.type.name];
       return newEquipped;
     });
 
+    // Remet l'objet dans l'inventaire
     setInventory((prev) => [...prev, item]);
   };
 
-  const equipToCompanion = (item, companionId) => {
+  // Fonctions pour l'équipement des compagnons
+  const equipItemToCompanion = (item, companionId) => {
     const companion = companions.find((c) => c.id === companionId);
     if (!companion) return;
 
     const slotType = getSlotTypeFromItem(item);
+
+    // Retire l'objet de l'inventaire
     setInventory((prev) => prev.filter((invItem) => invItem.id !== item.id));
 
+    // Met à jour l'équipement du compagnon
     setCompanions((prev) =>
       prev.map((c) => {
         if (c.id === companionId) {
           const newEquipment = { ...c.equipment };
+
+          // Si il y a déjà un équipement dans ce slot, le remet dans l'inventaire
           if (newEquipment[slotType]) {
             setInventory((prevInv) => [...prevInv, newEquipment[slotType]]);
           }
+
+          // Équipe le nouvel objet
           newEquipment[slotType] = item;
+
           return { ...c, equipment: newEquipment };
         }
         return c;
@@ -245,13 +284,16 @@ function App() {
     );
   };
 
-  const unequipFromCompanion = (companionId, slotType) => {
+  const unequipCompanionItem = (companionId, slotType) => {
     const companion = companions.find((c) => c.id === companionId);
     if (!companion || !companion.equipment[slotType]) return;
 
     const item = companion.equipment[slotType];
+
+    // Remet l'objet dans l'inventaire
     setInventory((prev) => [...prev, item]);
 
+    // Retire l'objet du compagnon
     setCompanions((prev) =>
       prev.map((c) => {
         if (c.id === companionId) {
@@ -263,6 +305,8 @@ function App() {
       })
     );
   };
+
+  // Fonction utilitaire pour déterminer le type de slot
   const getSlotTypeFromItem = (item) => {
     const typeMap = {
       Arme: "weapon",
@@ -273,158 +317,122 @@ function App() {
     return typeMap[item.type.name] || "weapon";
   };
 
-  // Fonctions pour les matériaux spéciaux
-  const addSpecialMaterial = (materialType, quantity = 1) => {
-    setSpecialMaterials((prev) => ({
-      ...prev,
-      [materialType]: (prev[materialType] || 0) + quantity,
-    }));
-  };
-
-  const useSpecialMaterial = (materialType, quantity = 1) => {
-    setSpecialMaterials((prev) => {
-      const currentAmount = prev[materialType] || 0;
-      if (currentAmount >= quantity) {
-        return {
-          ...prev,
-          [materialType]: currentAmount - quantity,
-        };
-      }
-      return prev;
-    });
-  };
-
   return (
-    <div className="app-container">
-      {/* Header compact avec stats principales */}
-      <header className="app-header">
-        <h1 className="app-title">⚔️ MiniEquip</h1>
-
-        <div className="app-stats">
-          <div className="stat-item">
-            <span>💰</span>
-            <span>{gold.toLocaleString()}</span>
-          </div>
-          <div className="stat-item">
-            <span>⭐</span>
-            <span>Niv. {playerLevel}</span>
-          </div>
-          <div className="stat-item">
-            <span>🎫</span>
-            <span>{dungeonTickets}</span>
-          </div>
-          <div className="stat-item">
-            <span>👥</span>
-            <span>{companions.length}</span>
-          </div>{" "}
-          <div className="stat-item">
-            <span>🎒</span>
-            <span>{inventory.length}</span>
-          </div>
-          <div className="stat-item" title="Matériaux Spéciaux">
-            <span>🔷</span>
-            <span>
-              {Object.values(specialMaterials).reduce(
-                (sum, count) => sum + count,
-                0
-              )}
-            </span>
+    <div className="app">
+      {/* Message de bienvenue */}
+      {showWelcomeBack && (
+        <div className="welcome-back-notification">
+          <div className="notification-content">
+            <h3>👋 Bon retour !</h3>
+            <p>Votre partie a été chargée avec succès</p>
+            {lastSaveTime && (
+              <p className="last-save">
+                Dernière sauvegarde : {lastSaveTime.toLocaleTimeString()}
+              </p>
+            )}
           </div>
         </div>
+      )}
 
-        <div className="header-buttons">
-          {saveStatus === "saving" && (
-            <span className="save-indicator">💾</span>
-          )}
-          {saveStatus === "saved" && <span className="save-indicator">✅</span>}
-          <button
-            className="compact-button"
-            onClick={manualSave}
-            title="Sauvegarder manuellement"
-          >
-            💾
-          </button>
-          <button
-            className="compact-button"
-            onClick={() => setShowSettingsModal(true)}
-            title="Paramètres"
-          >
-            ⚙️
-          </button>
-          <button
-            className="compact-button"
-            onClick={() => setShowAchievementsModal(true)}
-            title="Achievements"
-          >
-            🏆
-          </button>
+      <header className="app-header">
+        <h1>🔨 Forge d'Équipements</h1>
+        <div className="header-info">
+          <div className="gold-display">
+            <span>💰 Or: {gold}</span>
+            <span className="level-display">📈 Niveau: {playerLevel}</span>
+          </div>
+          <div className="save-info">
+            {saveStatus === "saving" && (
+              <span className="save-status saving">💾 Sauvegarde...</span>
+            )}
+            {saveStatus === "saved" && (
+              <span className="save-status saved">✅ Sauvegardé</span>
+            )}
+            {saveStatus === "error" && (
+              <span className="save-status error">❌ Erreur sauvegarde</span>
+            )}
+            {lastSaveTime && saveStatus === "idle" && (
+              <span className="last-save-time">
+                Dernière sauvegarde : {lastSaveTime.toLocaleTimeString()}
+              </span>
+            )}
+          </div>
+          <div className="header-buttons">
+            <button
+              className="manual-save-button"
+              onClick={manualSave}
+              title="Sauvegarder manuellement"
+            >
+              💾
+            </button>
+            <button
+              className="settings-button"
+              onClick={() => setShowSettingsModal(true)}
+              title="Paramètres"
+            >
+              ⚙️
+            </button>{" "}
+            <button
+              className="combat-toggle-button"
+              onClick={() => setShowCombatModal(true)}
+            >
+              ⚔️ Combat
+            </button>
+            <button
+              className="achievements-button"
+              onClick={() => setShowAchievementsModal(true)}
+              title="Achievements & Quêtes"
+            >
+              🏆 Achievements
+            </button>
+          </div>{" "}
         </div>
       </header>
 
-      {/* Navigation par onglets */}
-      <nav className="main-tabs">
-        <button
-          className={`main-tab ${activeMainTab === "forge" ? "active" : ""}`}
-          onClick={() => setActiveMainTab("forge")}
-        >
-          🔨 Forge
-        </button>
-        <button
-          className={`main-tab ${
-            activeMainTab === "inventory" ? "active" : ""
-          }`}
-          onClick={() => setActiveMainTab("inventory")}
-        >
-          🎒 Inventaire
-        </button>
-        <button
-          className={`main-tab ${activeMainTab === "combat" ? "active" : ""}`}
-          onClick={() => setActiveMainTab("combat")}
-        >
-          ⚔️ Combat
-        </button>
-      </nav>
-
-      {/* Contenu principal */}
-      <main className="main-content">
-        {activeMainTab === "forge" && (
-          <div className="content-single">
-            <EquipmentForge
-              onEquipmentForged={addToInventory}
-              gold={gold}
-              setGold={setGold}
-              companions={companions}
-              setCompanions={setCompanions}
-              passiveAbilities={passiveAbilities}
-              setPassiveAbilities={setPassiveAbilities}
-              onCombatLog={(message) => console.log(message)}
-              playerLevel={playerLevel}
-            />
-          </div>
-        )}
-        {activeMainTab === "inventory" && (
-          <div className="content-single">
-            <Inventory
-              items={inventory}
-              equippedItems={equippedItems}
-              onSellItem={sellItem}
-              onEquipItem={equipItem}
-              onUnequipItem={unequipItem}
-              companions={companions}
-              setCompanions={setCompanions}
-              onEquipToCompanion={equipToCompanion}
-              onUnequipFromCompanion={unequipFromCompanion}
-            />
-          </div>
-        )}{" "}
-        {activeMainTab === "combat" && (
-          <div className="content-single">
+      <main className="app-main">
+        {" "}
+        <EquipmentForge
+          onEquipmentForged={addToInventory}
+          gold={gold}
+          setGold={setGold}
+          companions={companions}
+          setCompanions={setCompanions}
+          passiveAbilities={passiveAbilities}
+          setPassiveAbilities={setPassiveAbilities}
+          playerLevel={playerLevel}
+        />
+        <Inventory
+          items={inventory}
+          equippedItems={equippedItems}
+          onSellItem={sellEquipment}
+          onEquipItem={equipItem}
+          onUnequipItem={unequipItem}
+          companions={companions}
+          setCompanions={setCompanions}
+          onEquipToCompanion={equipItemToCompanion}
+          onUnequipFromCompanion={unequipCompanionItem}
+        />
+      </main>
+      {/* Modal de Combat */}
+      {showCombatModal && (
+        <div className="combat-modal-overlay">
+          <div className="combat-modal">
+            <div className="combat-modal-header">
+              <h2>⚔️ Zone de Combat</h2>
+              <button
+                className="combat-modal-minimize"
+                onClick={() => setShowCombatModal(false)}
+                title="Réduire"
+              >
+                ➖{" "}
+              </button>
+            </div>{" "}
             <Combat
               equippedItems={equippedItems}
               gold={gold}
               setGold={setGold}
               onCombatStateChange={setCombatInProgress}
-              onEquipmentFound={addToInventory}
+              onEquipmentFound={handleEquipmentFound}
               companions={companions}
               setCompanions={setCompanions}
               passiveAbilities={passiveAbilities}
@@ -437,49 +445,57 @@ function App() {
               setExperience={setExperience}
               gameStats={gameStats}
               setGameStats={setGameStats}
-              specialMaterials={specialMaterials}
-              onSpecialMaterialFound={addSpecialMaterial}
-            />
-          </div>
-        )}
-      </main>
-
-      {/* Modales */}
-      {showSettingsModal && (
-        <div className="compact-modal">
-          <div className="compact-modal-content">
-            <SettingsModal
-              isOpen={showSettingsModal}
-              onClose={() => setShowSettingsModal(false)}
-              gameStats={gameStats}
-              gameSettings={gameSettings}
-              setGameSettings={setGameSettings}
-              onResetGame={resetGame}
-              manualSave={manualSave}
             />
           </div>
         </div>
       )}
+      {/* Bande latérale pour combat en cours */}
+      {combatInProgress && !showCombatModal && (
+        <div className="combat-sidebar">
+          <div className="combat-sidebar-content">
+            <div className="combat-sidebar-icon">⚔️</div>
+            <div className="combat-sidebar-text">
+              <div className="combat-status">Combat en cours</div>
+              <div className="combat-action">Cliquez pour ouvrir</div>
+            </div>
+          </div>
+          <button
+            className="combat-sidebar-button"
+            onClick={() => setShowCombatModal(true)}
+          >
+            Ouvrir Combat
+          </button>{" "}
+        </div>
+      )}
 
+      {/* Modal des paramètres */}
+      {showSettingsModal && (
+        <SettingsModal
+          isOpen={showSettingsModal}
+          onClose={() => setShowSettingsModal(false)}
+          gameStats={gameStats}
+          gameSettings={gameSettings}
+          setGameSettings={setGameSettings}
+          onResetGame={resetGame}
+          manualSave={manualSave}
+        />
+      )}
+
+      {/* Modal des Achievements */}
       {showAchievementsModal && (
-        <div className="compact-modal">
-          <div className="compact-modal-content">
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "20px",
-              }}
-            >
+        <div className="combat-modal-overlay">
+          <div className="combat-modal">
+            <div className="combat-modal-header">
               <h2>🏆 Achievements & Quêtes</h2>
               <button
-                className="compact-button"
+                className="combat-modal-minimize"
                 onClick={() => setShowAchievementsModal(false)}
+                title="Fermer"
               >
-                ❌ Fermer
+                ❌
               </button>
             </div>
+
             <AchievementsPanel
               gameStats={gameStats}
               onRewardClaimed={handleRewardClaimed}
@@ -493,24 +509,11 @@ function App() {
 
       {/* Notification de bienvenue */}
       {showWelcomeBack && (
-        <div
-          style={{
-            position: "fixed",
-            top: "20px",
-            right: "20px",
-            background: "linear-gradient(135deg, #28a745, #20c997)",
-            color: "white",
-            padding: "15px 20px",
-            borderRadius: "8px",
-            boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
-            zIndex: 2000,
-            animation: "slideIn 0.3s ease-out",
-          }}
-        >
-          <h3 style={{ margin: "0 0 5px 0" }}>🎮 Bon retour !</h3>
-          <p style={{ margin: 0, fontSize: "0.9rem" }}>
-            Partie chargée avec succès
-          </p>
+        <div className="welcome-notification">
+          <div className="welcome-content">
+            <h3>🎮 Bon retour !</h3>
+            <p>Votre partie a été chargée avec succès.</p>
+          </div>
         </div>
       )}
     </div>

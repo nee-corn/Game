@@ -1,0 +1,410 @@
+/* Mise à l'échelle et navigation compacte pour que tout tienne sur un écran */
+
+/* Variables pour la mise à l'échelle */
+:root {
+  --compact-scale: 0.85;
+  --compact-spacing: 8px;
+  --compact-font-size: 0.9rem;
+  --compact-border-radius: 6px;
+  --header-height: 60px;
+  --sidebar-width: 250px;
+  --main-content-height: calc(100vh - var(--header-height));
+}
+
+/* Layout principal compact */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  font-size: var(--compact-font-size);
+}
+
+/* Header compact avec navigation principale */
+.app-header {
+  height: var(--header-height);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+.app-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.app-stats {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,0.2);
+  padding: 4px 12px;
+  border-radius: var(--compact-border-radius);
+}
+
+/* Navigation par onglets compacte */
+.main-tabs {
+  display: flex;
+  background: #f8f9fa;
+  border-bottom: 2px solid #e9ecef;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.main-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.main-tab {
+  flex: 0 0 auto;
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--compact-font-size);
+  font-weight: 500;
+  color: #6c757d;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.main-tab:hover {
+  background: #e9ecef;
+  color: #495057;
+}
+
+.main-tab.active {
+  color: #007bff;
+  border-bottom-color: #007bff;
+  background: white;
+}
+
+/* Contenu principal avec scroll */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--compact-spacing);
+  height: var(--main-content-height);
+}
+
+/* Layout en colonnes pour optimiser l'espace */
+.content-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--compact-spacing);
+  height: 100%;
+}
+
+.content-single {
+  display: block;
+  height: 100%;
+}
+
+/* Sections compactes */
+.compact-section {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: var(--compact-border-radius);
+  padding: var(--compact-spacing);
+  margin-bottom: var(--compact-spacing);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.compact-section h3 {
+  margin: 0 0 var(--compact-spacing) 0;
+  font-size: 1.1rem;
+  color: #495057;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 5px;
+}
+
+.compact-section h4 {
+  margin: var(--compact-spacing) 0 5px 0;
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+/* Grilles compactes pour les éléments */
+.compact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--compact-spacing);
+}
+
+.compact-grid-small {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: calc(var(--compact-spacing) / 2);
+}
+
+/* Cartes compactes */
+.compact-card {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: var(--compact-border-radius);
+  padding: var(--compact-spacing);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.compact-card:hover {
+  background: #e9ecef;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+
+.compact-card.active {
+  border-color: #007bff;
+  background: #e7f3ff;
+}
+
+/* Boutons compacts */
+.compact-button {
+  padding: 6px 12px;
+  font-size: var(--compact-font-size);
+  border: 1px solid #dee2e6;
+  border-radius: var(--compact-border-radius);
+  background: white;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 2px;
+}
+
+.compact-button:hover {
+  background: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.compact-button.primary {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.compact-button.primary:hover {
+  background: #0056b3;
+  border-color: #0056b3;
+}
+
+.compact-button.danger {
+  background: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+.compact-button.success {
+  background: #28a745;
+  color: white;
+  border-color: #28a745;
+}
+
+/* Log de combat compact */
+.compact-log {
+  max-height: 200px;
+  overflow-y: auto;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: var(--compact-border-radius);
+  padding: var(--compact-spacing);
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  line-height: 1.3;
+}
+
+.compact-log div {
+  margin-bottom: 2px;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.compact-log .victory {
+  background: #d4edda;
+  color: #155724;
+}
+
+.compact-log .damage {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.compact-log .info {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+/* Barres de progression compactes */
+.compact-progress {
+  height: 20px;
+  background: #e9ecef;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  margin: 5px 0;
+}
+
+.compact-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #28a745, #20c997);
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.compact-progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Tooltips compacts */
+.compact-tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.compact-tooltip:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 1000;
+}
+
+/* Modales compactes */
+.compact-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.compact-modal-content {
+  background: white;
+  border-radius: var(--compact-border-radius);
+  padding: 20px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* Écran de victoire compact */
+.victory-screen {
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  border: 3px solid #f1c40f;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.victory-title {
+  font-size: 1.5rem;
+  color: #d35400;
+  margin-bottom: 15px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.victory-rewards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.victory-reward {
+  background: rgba(255,255,255,0.8);
+  padding: 10px;
+  border-radius: var(--compact-border-radius);
+  border: 1px solid #f39c12;
+}
+
+.victory-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  :root {
+    --compact-scale: 0.75;
+    --compact-spacing: 6px;
+    --compact-font-size: 0.8rem;
+    --sidebar-width: 200px;
+  }
+  
+  .content-columns {
+    grid-template-columns: 1fr;
+  }
+  
+  .app-stats {
+    gap: 10px;
+  }
+  
+  .stat-item {
+    padding: 2px 8px;
+    font-size: 0.8rem;
+  }
+  
+  .main-tab {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --compact-scale: 0.7;
+    --compact-spacing: 4px;
+    --compact-font-size: 0.75rem;
+  }
+  
+  .app-header {
+    padding: 0 10px;
+  }
+  
+  .app-title {
+    font-size: 1.2rem;
+  }
+  
+  .victory-actions {
+    flex-direction: column;
+  }
+}
