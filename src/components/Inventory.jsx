@@ -25,16 +25,18 @@ function Inventory({
   };
   const getComparisonItem = () => {
     if (!selectedItem || selectedItem.isEquipped) return null;
-    
+
     // Si on compare pour un compagnon spécifique dans la modal d'équipement
     if (selectedItem.targetCompanionId) {
-      const companion = companions.find(c => c.id === selectedItem.targetCompanionId);
+      const companion = companions.find(
+        (c) => c.id === selectedItem.targetCompanionId
+      );
       if (companion) {
         const slotType = getSlotTypeFromItem(selectedItem);
         return companion.equipment[slotType] || null;
       }
     }
-    
+
     // Sinon, comparaison pour le joueur
     const equippedOfSameType = equippedItems[selectedItem.type.name];
     return equippedOfSameType || null;
@@ -43,7 +45,7 @@ function Inventory({
   const getSlotTypeFromItem = (item) => {
     const typeMap = {
       Arme: "weapon",
-      Armure: "armor", 
+      Armure: "armor",
       Casque: "helmet",
       Bottes: "boots",
     };
@@ -91,11 +93,12 @@ function Inventory({
   const handleEquipToPlayer = () => {
     onEquipItem(selectedItem);
     closeItemModal();
-  };  const handleEquipToCompanion = (companionId) => {
+  };
+  const handleEquipToCompanion = (companionId) => {
     // Ajouter l'ID du compagnon cible pour la comparaison
     const itemWithTarget = {
       ...selectedItem,
-      targetCompanionId: companionId
+      targetCompanionId: companionId,
     };
     setSelectedItem(itemWithTarget);
     onEquipToCompanion(selectedItem, companionId);
@@ -635,11 +638,12 @@ function Inventory({
 
                 {companions && companions.length > 0 && (
                   <div className="companions-option">
-                    <h4>👥 Ou choisir un compagnon :</h4>                    <div className="companions-list">
+                    <h4>👥 Ou choisir un compagnon :</h4>{" "}
+                    <div className="companions-list">
                       {companions.map((companion) => {
                         const slotType = getSlotTypeFromItem(selectedItem);
                         const currentEquipment = companion.equipment[slotType];
-                        
+
                         return (
                           <button
                             key={companion.id}

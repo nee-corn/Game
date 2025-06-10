@@ -30,14 +30,14 @@ function App() {
     itemsForged: 0,
     companionsSummoned: 0,
     maxWaveReached: 1,
-    playtimeMinutes: 0
+    playtimeMinutes: 0,
   });
 
   // États pour les paramètres
   const [gameSettings, setGameSettings] = useState({
     autoSave: true,
     soundEnabled: true,
-    animationsEnabled: true
+    animationsEnabled: true,
   });
   // États pour la sauvegarde
   const [isLoaded, setIsLoaded] = useState(false);
@@ -48,11 +48,11 @@ function App() {
   useEffect(() => {
     const loadSaveData = async () => {
       const savedData = SaveSystem.loadGame();
-      
+
       if (savedData) {
         // Fusionner avec les données par défaut pour compatibilité
         const mergedData = SaveSystem.mergeWithDefaults(savedData);
-        
+
         // Charger les données
         setGold(mergedData.gold || 100);
         setInventory(mergedData.inventory || []);
@@ -62,17 +62,19 @@ function App() {
         setPlayerLevel(mergedData.playerLevel || 1);
         setExperience(mergedData.experience || 0);
         setGameStats(mergedData.stats || SaveSystem.getDefaultGameData().stats);
-        setGameSettings(mergedData.settings || SaveSystem.getDefaultGameData().settings);
-        
+        setGameSettings(
+          mergedData.settings || SaveSystem.getDefaultGameData().settings
+        );
+
         // Afficher message de bienvenue
         setShowWelcomeBack(true);
         setTimeout(() => setShowWelcomeBack(false), 3000);
-        
-        console.log('🎮 Partie chargée avec succès !');
+
+        console.log("🎮 Partie chargée avec succès !");
       } else {
-        console.log('🆕 Nouvelle partie !');
+        console.log("🆕 Nouvelle partie !");
       }
-      
+
       setIsLoaded(true);
     };
 
@@ -89,26 +91,33 @@ function App() {
     playerLevel,
     experience,
     stats: gameStats,
-    settings: gameSettings
+    settings: gameSettings,
   };
 
   // Utiliser le système de sauvegarde automatique
-  const { lastSaveTime, saveStatus, manualSave } = useAutoSave(gameData, gameSettings.autoSave && isLoaded);
+  const { lastSaveTime, saveStatus, manualSave } = useAutoSave(
+    gameData,
+    gameSettings.autoSave && isLoaded
+  );
 
   // Fonctions pour mettre à jour les statistiques
   const updateStats = (statUpdates) => {
-    setGameStats(prev => ({
+    setGameStats((prev) => ({
       ...prev,
-      ...statUpdates
+      ...statUpdates,
     }));
   };
 
   // Fonction pour réinitialiser le jeu
   const resetGame = () => {
-    if (window.confirm('⚠️ Êtes-vous sûr de vouloir recommencer une nouvelle partie ? Toute progression sera perdue !')) {
+    if (
+      window.confirm(
+        "⚠️ Êtes-vous sûr de vouloir recommencer une nouvelle partie ? Toute progression sera perdue !"
+      )
+    ) {
       SaveSystem.deleteSave();
       const defaultData = SaveSystem.getDefaultGameData();
-      
+
       setGold(defaultData.gold);
       setInventory(defaultData.inventory);
       setEquippedItems(defaultData.equippedItems);
@@ -118,8 +127,8 @@ function App() {
       setExperience(defaultData.experience);
       setGameStats(defaultData.stats);
       setGameSettings(defaultData.settings);
-      
-      console.log('🔄 Nouvelle partie commencée !');
+
+      console.log("🔄 Nouvelle partie commencée !");
     }
   };
 
@@ -131,8 +140,8 @@ function App() {
       }
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [gameData, isLoaded]);
 
   // Ne pas afficher le jeu tant qu'il n'est pas chargé
@@ -273,7 +282,7 @@ function App() {
       Armure: "armor",
       Casque: "helmet",
       Bottes: "boots",
-  };
+    };
     return typeMap[item.type.name] || "weapon";
   };
 
@@ -301,18 +310,22 @@ function App() {
             <span>💰 Or: {gold}</span>
             <span className="level-display">📈 Niveau: {playerLevel}</span>
           </div>
-          
           <div className="save-info">
-            {saveStatus === 'saving' && <span className="save-status saving">💾 Sauvegarde...</span>}
-            {saveStatus === 'saved' && <span className="save-status saved">✅ Sauvegardé</span>}
-            {saveStatus === 'error' && <span className="save-status error">❌ Erreur sauvegarde</span>}
-            {lastSaveTime && saveStatus === 'idle' && (
+            {saveStatus === "saving" && (
+              <span className="save-status saving">💾 Sauvegarde...</span>
+            )}
+            {saveStatus === "saved" && (
+              <span className="save-status saved">✅ Sauvegardé</span>
+            )}
+            {saveStatus === "error" && (
+              <span className="save-status error">❌ Erreur sauvegarde</span>
+            )}
+            {lastSaveTime && saveStatus === "idle" && (
               <span className="last-save-time">
                 Dernière sauvegarde : {lastSaveTime.toLocaleTimeString()}
               </span>
             )}
           </div>
-          
           <div className="header-buttons">
             <button
               className="manual-save-button"
@@ -334,9 +347,10 @@ function App() {
             >
               ⚔️ Combat
             </button>
-          </div>        </div>
+          </div>{" "}
+        </div>
       </header>
-      
+
       <main className="app-main">
         <EquipmentForge
           onEquipmentForged={addToInventory}
@@ -347,7 +361,7 @@ function App() {
           passiveAbilities={passiveAbilities}
           setPassiveAbilities={setPassiveAbilities}
         />
-        
+
         <Inventory
           items={inventory}
           equippedItems={equippedItems}
@@ -371,9 +385,10 @@ function App() {
                 onClick={() => setShowCombatModal(false)}
                 title="Réduire"
               >
-                ➖              </button>
+                ➖{" "}
+              </button>
             </div>
-            
+
             <Combat
               equippedItems={equippedItems}
               gold={gold}
@@ -403,11 +418,13 @@ function App() {
             onClick={() => setShowCombatModal(true)}
           >
             Ouvrir Combat
-          </button>        </div>
+          </button>{" "}
+        </div>
       )}
-      
+
       {/* Modal des paramètres */}
-      {showSettingsModal && (        <SettingsModal
+      {showSettingsModal && (
+        <SettingsModal
           isOpen={showSettingsModal}
           onClose={() => setShowSettingsModal(false)}
           gameStats={gameStats}
@@ -417,7 +434,7 @@ function App() {
           manualSave={manualSave}
         />
       )}
-      
+
       {/* Notification de bienvenue */}
       {showWelcomeBack && (
         <div className="welcome-notification">

@@ -1,24 +1,24 @@
-import { useState, useRef } from 'react';
-import { SaveSystem } from '../utils/SaveSystem';
-import './SaveSystem.css';
+import { useState, useRef } from "react";
+import { SaveSystem } from "../utils/SaveSystem";
+import "./SaveSystem.css";
 
-function SettingsModal({ 
-  isOpen, 
-  onClose, 
-  gameSettings, 
-  setGameSettings, 
-  gameStats, 
+function SettingsModal({
+  isOpen,
+  onClose,
+  gameSettings,
+  setGameSettings,
+  gameStats,
   onResetGame,
-  manualSave 
+  manualSave,
 }) {
   const fileInputRef = useRef(null);
 
   if (!isOpen) return null;
 
   const handleSettingToggle = (setting) => {
-    setGameSettings(prev => ({
+    setGameSettings((prev) => ({
       ...prev,
-      [setting]: !prev[setting]
+      [setting]: !prev[setting],
     }));
   };
 
@@ -35,12 +35,14 @@ function SettingsModal({
     if (file) {
       try {
         await SaveSystem.importSave(file);
-        alert('✅ Sauvegarde importée avec succès ! Rechargez la page pour voir les changements.');
+        alert(
+          "✅ Sauvegarde importée avec succès ! Rechargez la page pour voir les changements."
+        );
       } catch (error) {
-        alert('❌ Erreur lors de l\'importation de la sauvegarde.');
+        alert("❌ Erreur lors de l'importation de la sauvegarde.");
       }
     }
-    event.target.value = ''; // Reset input
+    event.target.value = ""; // Reset input
   };
 
   return (
@@ -51,34 +53,40 @@ function SettingsModal({
         {/* Paramètres généraux */}
         <div className="settings-section">
           <h3>🎮 Général</h3>
-          
+
           <div className="setting-item">
             <span>Sauvegarde automatique</span>
             <button
-              className={`setting-toggle ${gameSettings.autoSave ? 'active' : ''}`}
-              onClick={() => handleSettingToggle('autoSave')}
+              className={`setting-toggle ${
+                gameSettings.autoSave ? "active" : ""
+              }`}
+              onClick={() => handleSettingToggle("autoSave")}
             >
-              {gameSettings.autoSave ? '✅ Activé' : '❌ Désactivé'}
+              {gameSettings.autoSave ? "✅ Activé" : "❌ Désactivé"}
             </button>
           </div>
 
           <div className="setting-item">
             <span>Sons (à venir)</span>
             <button
-              className={`setting-toggle ${gameSettings.soundEnabled ? 'active' : ''}`}
-              onClick={() => handleSettingToggle('soundEnabled')}
+              className={`setting-toggle ${
+                gameSettings.soundEnabled ? "active" : ""
+              }`}
+              onClick={() => handleSettingToggle("soundEnabled")}
             >
-              {gameSettings.soundEnabled ? '🔊 Activé' : '🔇 Désactivé'}
+              {gameSettings.soundEnabled ? "🔊 Activé" : "🔇 Désactivé"}
             </button>
           </div>
 
           <div className="setting-item">
             <span>Animations (à venir)</span>
             <button
-              className={`setting-toggle ${gameSettings.animationsEnabled ? 'active' : ''}`}
-              onClick={() => handleSettingToggle('animationsEnabled')}
+              className={`setting-toggle ${
+                gameSettings.animationsEnabled ? "active" : ""
+              }`}
+              onClick={() => handleSettingToggle("animationsEnabled")}
             >
-              {gameSettings.animationsEnabled ? '✨ Activé' : '⏹️ Désactivé'}
+              {gameSettings.animationsEnabled ? "✨ Activé" : "⏹️ Désactivé"}
             </button>
           </div>
         </div>
@@ -118,13 +126,22 @@ function SettingsModal({
         <div className="settings-section">
           <h3>💾 Sauvegarde</h3>
           <div className="settings-actions">
-            <button className="settings-button save-button" onClick={manualSave}>
+            <button
+              className="settings-button save-button"
+              onClick={manualSave}
+            >
               💾 Sauvegarder
             </button>
-            <button className="settings-button export-button" onClick={handleExport}>
+            <button
+              className="settings-button export-button"
+              onClick={handleExport}
+            >
               📤 Exporter
             </button>
-            <button className="settings-button import-button" onClick={handleImportClick}>
+            <button
+              className="settings-button import-button"
+              onClick={handleImportClick}
+            >
               📥 Importer
             </button>
           </div>
@@ -134,7 +151,10 @@ function SettingsModal({
         <div className="settings-section">
           <h3>⚠️ Zone de Danger</h3>
           <div className="settings-actions">
-            <button className="settings-button reset-button" onClick={onResetGame}>
+            <button
+              className="settings-button reset-button"
+              onClick={onResetGame}
+            >
               🔄 Nouvelle Partie
             </button>
             <button className="settings-button close-button" onClick={onClose}>
