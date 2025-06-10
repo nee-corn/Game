@@ -1,0 +1,223 @@
+/* Variables de couleurs harmonisées pour l'application */
+:root {
+  /* Couleurs principales */
+  --primary-blue: #00e6ff;
+  --primary-blue-dark: #00d4ff;
+  --primary-orange: #ff8c42;
+  --primary-orange-dark: #ff6b35;
+  
+  /* Couleurs secondaires */
+  --secondary-green: #4caf50;
+  --secondary-green-light: #66bb6a;
+  --secondary-purple: #9c27b0;
+  --secondary-purple-light: #e91e63;
+  
+  /* Couleurs d'accent */
+  --accent-gold: #ffd700;
+  --accent-gold-dark: #ffb300;
+  --accent-pink: #ff0080;
+  --accent-pink-light: #ff4da6;
+  --accent-cyan: #00ff88;
+  
+  /* Couleurs de fond */
+  --bg-primary: linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e);
+  --bg-secondary: linear-gradient(135deg, #1a1a2e, #16213e);
+  --bg-tertiary: linear-gradient(135deg, #2c1810, #4a2c20);
+  --bg-header: linear-gradient(45deg, #2c3e50, #34495e);
+  
+  /* Couleurs de texte */
+  --text-primary: #ffffff;
+  --text-secondary: #f0f0f0;
+  --text-muted: #d0d0d0;
+  --text-disabled: #999999;
+  
+  /* Couleurs d'état */
+  --success: #4caf50;
+  --warning: #ff9800;
+  --error: #f44336;
+  --info: #2196f3;
+  
+  /* Transparences */
+  --overlay-light: rgba(255, 255, 255, 0.1);
+  --overlay-medium: rgba(255, 255, 255, 0.15);
+  --overlay-dark: rgba(0, 0, 0, 0.3);
+  --overlay-darker: rgba(0, 0, 0, 0.5);
+  
+  /* Bordures */
+  --border-light: rgba(255, 255, 255, 0.1);
+  --border-medium: rgba(255, 255, 255, 0.2);
+  --border-strong: rgba(255, 255, 255, 0.3);
+  
+  /* Ombres */
+  --shadow-small: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-medium: 0 4px 15px rgba(0, 0, 0, 0.3);
+  --shadow-large: 0 8px 25px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.6);
+  
+  /* Rayons de bordure */
+  --radius-small: 6px;
+  --radius-medium: 8px;
+  --radius-large: 10px;
+  --radius-xl: 15px;
+  
+  /* Transitions */
+  --transition-fast: all 0.2s ease;
+  --transition-medium: all 0.3s ease;
+  --transition-slow: all 0.5s ease;
+  
+  /* Espacements */
+  --spacing-xs: 5px;
+  --spacing-sm: 10px;
+  --spacing-md: 15px;
+  --spacing-lg: 20px;
+  --spacing-xl: 25px;
+  
+  /* Tailles de police */
+  --font-xs: 0.8rem;
+  --font-sm: 0.9rem;
+  --font-md: 1rem;
+  --font-lg: 1.1rem;
+  --font-xl: 1.3rem;
+  --font-2xl: 1.5rem;
+  --font-3xl: 1.8rem;
+  
+  /* Poids de police */
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+}
+
+/* Variables de couleurs spécifiques aux composants */
+:root {
+  /* Combat */
+  --combat-tab-active: var(--primary-orange);
+  --combat-enemy-border: var(--primary-orange-dark);
+  --combat-boss-border: var(--accent-pink);
+  
+  /* Inventaire */
+  --inventory-tab-active: var(--primary-blue);
+  --inventory-equipment-border: var(--primary-blue-dark);
+  --inventory-slot-filled: var(--overlay-medium);
+  
+  /* Forge */
+  --forge-title: var(--primary-orange);
+  --forge-companion-border: var(--primary-orange-dark);
+  --forge-passive-border: var(--secondary-purple);
+  
+  /* Tickets et donjons */
+  --ticket-color: var(--accent-gold);
+  --ticket-bg: rgba(255, 215, 0, 0.15);
+  --dungeon-boss-color: var(--accent-pink);
+  --ultra-boss-color: var(--primary-orange);
+  
+  /* États des boutons */
+  --btn-primary: linear-gradient(45deg, var(--primary-orange), var(--primary-orange-dark));
+  --btn-secondary: linear-gradient(45deg, var(--primary-blue), var(--primary-blue-dark));
+  --btn-success: linear-gradient(45deg, var(--secondary-green), var(--secondary-green-light));
+  --btn-danger: linear-gradient(45deg, var(--error), #ff6b6b);
+  --btn-warning: linear-gradient(45deg, var(--warning), #ffb74d);
+  --btn-disabled: #666666;
+  
+  /* Barres de progression */
+  --hp-player: linear-gradient(45deg, var(--secondary-green), var(--secondary-green-light));
+  --hp-enemy: linear-gradient(45deg, var(--error), #ff6b6b);
+  --hp-boss: linear-gradient(45deg, var(--accent-pink), var(--accent-pink-light));
+  
+  /* Raretés d'objets */
+  --rarity-common: #9e9e9e;
+  --rarity-uncommon: #4caf50;
+  --rarity-rare: #2196f3;
+  --rarity-epic: #9c27b0;
+  --rarity-legendary: #ff9800;
+  --rarity-mythic: var(--accent-pink);
+}
+
+/* Classe utilitaires pour l'accessibilité */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--bg-header);
+  color: var(--text-primary);
+  padding: 8px;
+  text-decoration: none;
+  border-radius: var(--radius-medium);
+  z-index: 1000;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* Classes utilitaires pour les couleurs */
+.text-primary { color: var(--primary-blue); }
+.text-secondary { color: var(--primary-orange); }
+.text-success { color: var(--secondary-green); }
+.text-warning { color: var(--warning); }
+.text-error { color: var(--error); }
+.text-muted { color: var(--text-muted); }
+
+.bg-primary { background: var(--bg-primary); }
+.bg-secondary { background: var(--bg-secondary); }
+.bg-overlay { background: var(--overlay-light); }
+
+.border-primary { border-color: var(--primary-blue); }
+.border-secondary { border-color: var(--primary-orange); }
+.border-light { border-color: var(--border-light); }
+
+/* Animations globales */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 1; 
+  }
+  50% { 
+    transform: scale(1.05); 
+    opacity: 0.8; 
+  }
+}
+
+@keyframes glow {
+  0%, 100% { 
+    box-shadow: 0 0 5px var(--primary-blue); 
+  }
+  50% { 
+    box-shadow: 0 0 20px var(--primary-blue); 
+  }
+}
+
+/* Classes d'animation utilitaires */
+.fade-in { animation: fadeIn 0.3s ease-out; }
+.slide-up { animation: slideUp 0.3s ease-out; }
+.pulse { animation: pulse 2s ease-in-out infinite; }
+.glow { animation: glow 2s ease-in-out infinite; }

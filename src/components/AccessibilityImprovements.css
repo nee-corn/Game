@@ -1,0 +1,201 @@
+/* Améliorations d'accessibilité globales */
+
+/* Focus visible amélioré pour tous les éléments interactifs */
+button:focus,
+.combat-tab:focus,
+.tab:focus,
+.inventory-slot:focus,
+.equipment-slot:focus,
+.enemy-card:focus,
+.boss-card:focus {
+  outline: 3px solid #00e6ff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px rgba(0, 230, 255, 0.3);
+}
+
+/* Amélioration des contrastes pour le texte important */
+.combat-container h2,
+.inventory-container h2,
+.equipment-forge h2 {
+  color: #ffffff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Amélioration des états de survol pour une meilleure rétroaction */
+.combat-tab:hover,
+.tab:hover {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Amélioration de la lisibilité des petits textes */
+.enemy-details div,
+.boss-details div,
+.stat-display .stat-name,
+.ticket-explanation {
+  font-size: 0.95em;
+  line-height: 1.4;
+  color: #f0f0f0;
+}
+
+/* Amélioration des indicateurs visuels */
+.active-indicator,
+.elite-badge,
+.ultra-badge,
+.rarity-badge {
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Amélioration des zones cliquables */
+.enemy-card,
+.boss-card,
+.inventory-slot,
+.equipment-slot {
+  min-height: 44px; /* Taille minimale recommandée pour l'accessibilité */
+  min-width: 44px;
+}
+
+/* Amélioration des transitions pour réduire les mouvements pour les utilisateurs sensibles */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Amélioration du contraste pour les utilisateurs ayant des préférences de contraste élevé */
+@media (prefers-contrast: high) {
+  .combat-container,
+  .inventory-container,
+  .equipment-forge {
+    border: 2px solid #ffffff;
+  }
+  
+  .combat-tab,
+  .tab,
+  .enemy-card,
+  .boss-card {
+    border-width: 2px;
+  }
+  
+  .stat,
+  .inventory-slot,
+  .equipment-slot {
+    border: 2px solid #ffffff;
+  }
+}
+
+/* Amélioration pour les utilisateurs préférant un mode sombre */
+@media (prefers-color-scheme: dark) {
+  .enemy-details div,
+  .boss-details div,
+  .ticket-explanation {
+    color: #ffffff;
+  }
+}
+
+/* Amélioration de la taille du texte pour la lisibilité */
+.combat-tab,
+.tab,
+.stat,
+.enemy-details strong,
+.boss-details strong {
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+}
+
+/* Messages d'erreur et de succès avec des couleurs accessibles */
+.error-message {
+  background: linear-gradient(45deg, #d32f2f, #f44336);
+  color: #ffffff;
+  padding: 12px;
+  border-radius: 8px;
+  border: 2px solid #ffffff;
+  font-weight: 600;
+}
+
+.success-message {
+  background: linear-gradient(45deg, #388e3c, #4caf50);
+  color: #ffffff;
+  padding: 12px;
+  border-radius: 8px;
+  border: 2px solid #ffffff;
+  font-weight: 600;
+}
+
+/* Amélioration des barres de progression pour une meilleure visibilité */
+.hp-bar,
+.wave-progress-bar,
+.progress-bar {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hp-fill,
+.wave-progress-fill,
+.progress-fill {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+/* Amélioration des modals pour une meilleure accessibilité */
+.modal-overlay {
+  backdrop-filter: blur(8px);
+}
+
+.item-modal,
+.combat-modal,
+.equip-modal {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Amélioration des tooltips et informations contextuelles */
+.tooltip {
+  background: rgba(0, 0, 0, 0.9);
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Amélioration des indicateurs de chargement */
+.loading-spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid #00e6ff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Amélioration des liens et éléments interactifs */
+a, button, .clickable {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Amélioration de l'affordance visuelle pour les éléments interactifs */
+.interactive:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Amélioration des zones de drop pour le drag and drop */
+.drop-zone {
+  border: 2px dashed rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.drop-zone.drag-over {
+  border-color: #00e6ff;
+  background: rgba(0, 230, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 230, 255, 0.3);
+}

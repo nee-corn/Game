@@ -9,15 +9,17 @@
   flex-direction: column;
   overflow-y: auto;
   margin: 0;
+  border: 1px solid rgba(255, 107, 53, 0.2);
 }
 
 .equipment-forge h2 {
   text-align: center;
   margin-bottom: 18px;
-  color: #ff6b35;
+  color: #ff8c42;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   font-size: 1.6em;
   flex-shrink: 0;
+  font-weight: 600;
 }
 
 .forge-area {
@@ -314,6 +316,14 @@
   margin-top: 6px;
 }
 
+.cost-increase {
+  display: block;
+  font-size: 0.8em;
+  color: #ff9500;
+  font-style: italic;
+  margin-top: 2px;
+}
+
 .summon-button {
   background: linear-gradient(45deg, #4CAF50, #45a049);
   border: none;
@@ -495,4 +505,53 @@
   color: #4CAF50;
   font-weight: bold;
   margin-left: auto;
+}
+
+.forge-info {
+  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cost-info {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cost-breakdown {
+  margin-top: 10px;
+}
+
+.cost-factors {
+  margin-top: 8px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  color: #ccc;
+}
+
+.cost-factors small {
+  line-height: 1.4;
+}
+
+.rarity-chances {
+  margin-top: 15px;
+}
+
+.rarity-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  margin: 4px 0;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  font-size: 0.9em;
+}
+
+.rarity-chance {
+  font-weight: bold;
 }

@@ -187,10 +187,19 @@ function EquipmentForge({
   passiveAbilities,
   setPassiveAbilities,
   onCombatLog,
+  playerLevel = 1,
 }) {
   const [activeTab, setActiveTab] = useState("forge");
   const [isForging, setIsForging] = useState(false);
   const [lastForgedItem, setLastForgedItem] = useState(null);
+
+  // Calculer le coût de forge dynamique
+  const getCurrentForgeCost = () => {
+    const currentForgeCount = parseInt(
+      localStorage.getItem("forgeCount") || "0"
+    );
+    return GameBalance.calculateForgeCost(playerLevel, currentForgeCount);
+  };
 
   const determineRarity = () => {
     const rand = Math.random() * 100;
@@ -346,11 +355,7 @@ function EquipmentForge({
     const currentForgeCount = parseInt(
       localStorage.getItem("forgeCount") || "0"
     );
-    const playerLevel = parseInt(localStorage.getItem("playerLevel") || "1");
-    const forgeCost = GameBalance.calculateForgeCost(
-      playerLevel,
-      currentForgeCount
-    );
+    const forgeCost = getCurrentForgeCost();
 
     if (gold < forgeCost) {
       alert(`Pas assez d'or pour forger ! (Coût: ${forgeCost} or)`);
@@ -435,10 +440,11 @@ function EquipmentForge({
         <div className="forge-tab-content">
           <div className="forge-area">
             <div className="forge-button-container">
+              {" "}
               <button
                 className={`forge-button ${isForging ? "forging" : ""}`}
                 onClick={forgeEquipment}
-                disabled={isForging || gold < 20}
+                disabled={isForging || gold < getCurrentForgeCost()}
               >
                 {isForging ? (
                   <>
@@ -448,7 +454,7 @@ function EquipmentForge({
                 ) : (
                   <>
                     🔨 Forger un équipement
-                    <span className="cost">(20 or)</span>
+                    <span className="cost">({getCurrentForgeCost()} or)</span>
                   </>
                 )}
               </button>
@@ -496,6 +502,30 @@ function EquipmentForge({
 
             <div className="forge-info">
               <h3>📋 Informations de forge</h3>
+
+              {/* Informations sur le coût dynamique */}
+              <div className="cost-info">
+                <h4>💰 Coût de forge :</h4>
+                <div className="cost-breakdown">
+                  <div>
+                    Coût actuel : <strong>{getCurrentForgeCost()} or</strong>
+                  </div>
+                  <div className="cost-factors">
+                    <small>
+                      • Coût de base : 25 or
+                      <br />• Bonus niveau : +{Math.floor(playerLevel / 5) *
+                        5}{" "}
+                      or (tous les 5 niveaux)
+                      <br />• Bonus fréquence : +
+                      {Math.floor(
+                        parseInt(localStorage.getItem("forgeCount") || "0") / 10
+                      )}{" "}
+                      or (toutes les 10 forges)
+                    </small>
+                  </div>
+                </div>
+              </div>
+
               <div className="rarity-chances">
                 <h4>🎲 Chances de rareté :</h4>
                 {Object.entries(RARITIES)
@@ -521,38 +551,52 @@ function EquipmentForge({
         <div className="forge-tab-content">
           <div className="companions-section">
             <h3>👥 Invocation de Compagnons</h3>
-            <p>Invoquez des compagnons pour vous aider au combat !</p>
-
+            <p>Invoquez des compagnons pour vous aider au combat !</p>{" "}
             {/* Compagnons disponibles */}
             <div className="companions-grid">
-              {Object.values(COMPANION_TYPES).map((companion, index) => (
-                <div key={index} className="companion-card">
-                  <div className="companion-info">
-                    <span className="companion-emoji">{companion.emoji}</span>
-                    <div className="companion-details">
-                      <strong>{companion.name}</strong>
-                      <div className="companion-rarity">{companion.rarity}</div>
-                      <div>❤️ {companion.baseHp} PV</div>
-                      <div>⚔️ {companion.baseAttack} Attaque</div>
-                      <div className="companion-ability">
-                        {companion.description}
-                      </div>
-                      <div className="companion-cost">
-                        💰 {companion.cost} or
+              {Object.values(COMPANION_TYPES).map((companion, index) => {
+                const currentCompanions = companions ? companions.length : 0;
+                const dynamicCost = GameBalance.calculateCompanionCost(
+                  index,
+                  currentCompanions
+                );
+
+                return (
+                  <div key={index} className="companion-card">
+                    <div className="companion-info">
+                      <span className="companion-emoji">{companion.emoji}</span>
+                      <div className="companion-details">
+                        <strong>{companion.name}</strong>
+                        <div className="companion-rarity">
+                          {companion.rarity}
+                        </div>
+                        <div>❤️ {companion.baseHp} PV</div>
+                        <div>⚔️ {companion.baseAttack} Attaque</div>
+                        <div className="companion-ability">
+                          {companion.description}
+                        </div>
+                        <div className="companion-cost">
+                          💰 {dynamicCost} or
+                          {currentCompanions > 0 && (
+                            <span className="cost-increase">
+                              (+{dynamicCost - companion.cost} dû aux{" "}
+                              {currentCompanions} compagnons)
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
+                    <button
+                      className="summon-button"
+                      onClick={() => summonCompanion(companion.name)}
+                      disabled={gold < dynamicCost}
+                    >
+                      🔮 Invoquer
+                    </button>
                   </div>
-                  <button
-                    className="summon-button"
-                    onClick={() => summonCompanion(companion.name)}
-                    disabled={gold < companion.cost}
-                  >
-                    🔮 Invoquer
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
-
             {/* Compagnons possédés */}
             {companions && companions.length > 0 && (
               <div className="owned-companions">

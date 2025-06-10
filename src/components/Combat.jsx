@@ -369,6 +369,12 @@ function Combat({
   setPassiveAbilities,
   dungeonTickets = 0,
   setDungeonTickets,
+  playerLevel,
+  setPlayerLevel,
+  experience,
+  setExperience,
+  gameStats,
+  setGameStats,
 }) {
   // État des onglets
   const [activeTab, setActiveTab] = useState("combat");
@@ -378,9 +384,7 @@ function Combat({
   const [enemyHp, setEnemyHp] = useState(0);
   const [isInCombat, setIsInCombat] = useState(false);
   const [combatLog, setCombatLog] = useState([]);
-  const [playerLevel, setPlayerLevel] = useState(1);
   const [maxPlayerHp, setMaxPlayerHp] = useState(100);
-  const [experience, setExperience] = useState(0);
 
   // États du donjon
   const [currentBoss, setCurrentBoss] = useState(null);
@@ -398,6 +402,48 @@ function Combat({
   const [streakCount, setStreakCount] = useState(1);
   const [lastVictoryTime, setLastVictoryTime] = useState(0);
   const [combatEffects, setCombatEffects] = useState([]);
+
+  // Fonctions pour l'XP et les niveaux
+  const getExperienceForLevel = (level) => {
+    // Formule progressive pour l'XP requise
+    return Math.floor(100 * Math.pow(1.5, level - 1));
+  };
+
+  const handleLevelUp = (newExperience) => {
+    let currentLevel = playerLevel;
+    let remainingExp = newExperience;
+
+    // Vérifier s'il y a montée de niveau (peut être plusieurs niveaux)
+    while (remainingExp >= getExperienceForLevel(currentLevel + 1)) {
+      remainingExp -= getExperienceForLevel(currentLevel + 1);
+      currentLevel++;
+
+      // Afficher message de montée de niveau
+      setCombatLog((prev) => [
+        ...prev,
+        `🎉 NIVEAU SUPÉRIEUR ! Vous êtes maintenant niveau ${currentLevel} !`,
+        `✨ +10 PV max, +2 Attaque, +1 Défense !`,
+      ]);
+
+      // Mettre à jour les stats de base (bonus par niveau)
+      setMaxPlayerHp((prev) => prev + 10);
+      setPlayerHp((prev) => prev + 10); // Bonus de PV immédiat
+    }
+
+    // Mettre à jour le niveau et l'expérience
+    if (currentLevel > playerLevel) {
+      setPlayerLevel(currentLevel);
+      setExperience(remainingExp);
+
+      // Mettre à jour les statistiques de jeu
+      setGameStats((prev) => ({
+        ...prev,
+        playerLevel: currentLevel,
+      }));
+    } else {
+      setExperience(remainingExp);
+    }
+  };
 
   // Fonction pour obtenir les ennemis débloqués
   const getUnlockedEnemies = () => {
@@ -818,18 +864,43 @@ function Combat({
       : `⚔️ Vous attaquez pour ${finalDamage} dégâts !`;
 
     setDungeonLog((prev) => [...prev, logMessage]);
-
     if (newBossHp <= 0) {
       // Victoire contre le boss
       const playerStats = getPlayerStats();
       const luckBonus = (playerStats.luck || 0) * 2;
       const mythicChance = currentBoss.mythicChance + luckBonus;
+      const hasExpBoost = passiveAbilities.find(
+        (p) => p.name === "Apprentissage Rapide"
+      );
 
+      // Récompenses d'or et d'XP
       setGold((prev) => prev + currentBoss.goldReward);
-      setDungeonLog((prev) => [
+
+      let bossExpReward = currentBoss.expReward || 50;
+      if (hasExpBoost) {
+        bossExpReward = Math.floor(bossExpReward * 2);
+      }
+
+      // Gérer l'expérience et la montée de niveau
+      const newTotalExperience = experience + bossExpReward;
+      handleLevelUp(newTotalExperience);
+
+      // Mettre à jour les stats de jeu
+      setGameStats((prev) => ({
         ...prev,
-        `🎉 Victoire épique ! +${currentBoss.goldReward} or reçu !`,
-      ]);
+        totalCombats: prev.totalCombats + 1,
+        totalVictories: prev.totalVictories + 1,
+        bossesDefeated: prev.bossesDefeated + 1,
+        totalGoldEarned: prev.totalGoldEarned + currentBoss.goldReward,
+      }));
+
+      setDungeonLog((prev) =>
+        [
+          ...prev,
+          `🎉 Victoire épique ! +${currentBoss.goldReward} or, +${bossExpReward} exp !`,
+          hasExpBoost ? `📚 Apprentissage Rapide : XP doublée !` : null,
+        ].filter(Boolean)
+      );
 
       // Vérification des drops spéciaux
       if (currentBoss.isUltraBoss) {
@@ -1160,11 +1231,13 @@ function Combat({
     setTimeout(() => {
       setCombatLog([]);
     }, 3000);
-  };
-  // Fonction de gestion de la victoire
+  }; // Fonction de gestion de la victoire
   const handleVictory = () => {
     const playerStats = getPlayerStats();
     const hasAvarice = passiveAbilities.find((p) => p.name === "Avarice");
+    const hasExpBoost = passiveAbilities.find(
+      (p) => p.name === "Apprentissage Rapide"
+    );
 
     // Calculer les récompenses avec le système d'équilibrage
     const goldReward = GameBalance.calculateGoldReward(
@@ -1174,18 +1247,38 @@ function Combat({
       hasAvarice
     );
 
-    const expReward = currentEnemy.expReward || 10;
+    let expReward = currentEnemy.expReward || 10;
+
+    // Appliquer le bonus d'XP si disponible
+    if (hasExpBoost) {
+      expReward = Math.floor(expReward * 2); // Double XP avec Apprentissage Rapide
+    }
 
     // Appliquer les récompenses
     setGold((prev) => prev + goldReward);
 
+    // Gérer l'expérience et la montée de niveau
+    const newTotalExperience = experience + expReward;
+    handleLevelUp(newTotalExperience);
+
+    // Mettre à jour les statistiques de jeu
+    setGameStats((prev) => ({
+      ...prev,
+      totalCombats: prev.totalCombats + 1,
+      totalVictories: prev.totalVictories + 1,
+      totalGoldEarned: prev.totalGoldEarned + goldReward,
+    }));
+
     // Mettre à jour le temps de dernière victoire pour les streaks
     setLastVictoryTime(Date.now());
 
-    setCombatLog((prev) => [
-      ...prev,
-      `🎉 Victoire ! +${goldReward} or, +${expReward} exp !`,
-    ]);
+    setCombatLog((prev) =>
+      [
+        ...prev,
+        `🎉 Victoire ! +${goldReward} or, +${expReward} exp !`,
+        hasExpBoost ? `📚 Apprentissage Rapide : XP doublée !` : null,
+      ].filter(Boolean)
+    );
 
     // Combat individuel terminé
     setIsInCombat(false);
@@ -1272,9 +1365,31 @@ function Combat({
       {/* Contenu des onglets */}
       {activeTab === "combat" && (
         <div className="combat-tab-content">
+          {" "}
           {/* Stats du joueur */}
           <div className="player-stats">
             <h3>🧙‍♂️ Vos Stats (Niveau {playerLevel})</h3>
+            {/* Barre d'expérience */}
+            <div className="experience-section">
+              <div className="experience-info">
+                <span>
+                  ⭐ Expérience: {experience} /{" "}
+                  {getExperienceForLevel(playerLevel + 1)}
+                </span>
+                <span>Niveau suivant: {playerLevel + 1}</span>
+              </div>
+              <div className="experience-bar">
+                <div
+                  className="experience-progress"
+                  style={{
+                    width: `${
+                      (experience / getExperienceForLevel(playerLevel + 1)) *
+                      100
+                    }%`,
+                  }}
+                ></div>
+              </div>
+            </div>
             <div className="stats-display">
               <div className="stat">
                 ❤️ Vie: {playerHp}/{maxPlayerHp}
@@ -1300,7 +1415,6 @@ function Combat({
               💚 Se soigner (30 or)
             </button>
           </div>
-
           {/* Tickets de donjon */}
           <div className="tickets-section">
             <h3>🎫 Tickets de Donjon</h3>
@@ -1320,7 +1434,6 @@ function Combat({
               </div>
             </div>
           </div>
-
           {!isInCombat ? (
             <div className="enemy-selection">
               <h3>🎯 Zones d'exploration :</h3>

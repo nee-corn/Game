@@ -5,7 +5,9 @@ import Combat from "./components/Combat";
 import AchievementsPanel from "./components/AchievementsPanel";
 import SettingsModal from "./components/SettingsModal";
 import { SaveSystem, useAutoSave } from "./utils/SaveSystem";
+import "./styles/variables.css";
 import "./components/SaveSystem.css";
+import "./components/AccessibilityImprovements.css";
 import "./App.css";
 
 function App() {
@@ -384,6 +386,7 @@ function App() {
       </header>
 
       <main className="app-main">
+        {" "}
         <EquipmentForge
           onEquipmentForged={addToInventory}
           gold={gold}
@@ -392,8 +395,8 @@ function App() {
           setCompanions={setCompanions}
           passiveAbilities={passiveAbilities}
           setPassiveAbilities={setPassiveAbilities}
+          playerLevel={playerLevel}
         />
-
         <Inventory
           items={inventory}
           equippedItems={equippedItems}
@@ -432,6 +435,12 @@ function App() {
               setPassiveAbilities={setPassiveAbilities}
               dungeonTickets={dungeonTickets}
               setDungeonTickets={setDungeonTickets}
+              playerLevel={playerLevel}
+              setPlayerLevel={setPlayerLevel}
+              experience={experience}
+              setExperience={setExperience}
+              gameStats={gameStats}
+              setGameStats={setGameStats}
             />
           </div>
         </div>
