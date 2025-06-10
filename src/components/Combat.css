@@ -268,6 +268,796 @@
   margin-bottom: 0;
 }
 
+/* Styles spécifiques pour la modal de combat */
+.combat-modal-content {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  color: #fff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  margin: 0;
+}
+
+.combat-modal-content h2 {
+  display: none; /* Le titre est géré par la modal */
+}
+
+/* Styles pour les onglets de combat */
+.combat-tabs {
+  display: flex;
+  margin-bottom: 15px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.combat-tab {
+  background: transparent;
+  border: none;
+  padding: 15px 25px;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-weight: bold;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.combat-tab:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.combat-tab.active {
+  color: #ff6b35;
+  border-bottom-color: #ff6b35;
+  background: rgba(255, 107, 53, 0.1);
+}
+
+.combat-tab-content,
+.dungeon-tab-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+/* Styles pour le donjon */
+.dungeon-info {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 0.9em;
+  color: #e0e0e0;
+  flex-shrink: 0;
+}
+
+.dungeon-info p {
+  margin: 0 0 5px 0;
+}
+
+.boss-selection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.boss-selection h3 {
+  text-align: center;
+  color: #e0e0e0;
+  margin-bottom: 15px;
+  flex-shrink: 0;
+}
+
+.bosses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.boss-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 0, 128, 0.2);
+  border-radius: 12px;
+  padding: 15px;
+  transition: all 0.3s ease;
+  height: fit-content;
+}
+
+.boss-card:hover {
+  border-color: #ff0080;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(255, 0, 128, 0.3);
+}
+
+.boss-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.boss-emoji {
+  font-size: 3em;
+  margin-right: 15px;
+}
+
+.boss-details {
+  flex: 1;
+}
+
+.boss-details strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #fff;
+  font-size: 1.2em;
+}
+
+.boss-details div {
+  font-size: 0.95em;
+  margin-bottom: 3px;
+  color: #ccc;
+}
+
+.mythic-chance {
+  color: #ff0080;
+  font-weight: bold;
+  font-size: 1.05em;
+}
+
+.luck-bonus {
+  color: #00ff88;
+  font-weight: bold;
+}
+
+.challenge-button {
+  background: linear-gradient(45deg, #ff0080, #ff4da6);
+  border: none;
+  padding: 12px 20px;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+  transition: all 0.2s ease;
+  font-size: 1em;
+}
+
+.challenge-button:hover:not(:disabled) {
+  background: linear-gradient(45deg, #e6006b, #ff0080);
+  transform: scale(1.02);
+}
+
+.challenge-button:disabled {
+  background: #666;
+  cursor: not-allowed;
+}
+
+/* Combat de donjon */
+.dungeon-arena {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.boss-battle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+}
+
+.battle-display {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 25px;
+  padding: 25px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  border: 2px solid rgba(255, 0, 128, 0.3);
+  flex-shrink: 0;
+}
+
+.player-battle,
+.boss-battle-display {
+  text-align: center;
+  flex: 1;
+}
+
+.battle-character {
+  font-size: 4em;
+  margin-bottom: 15px;
+}
+
+.boss-char {
+  filter: drop-shadow(0 0 10px rgba(255, 0, 128, 0.5));
+}
+
+.hp-bar {
+  width: 100%;
+  height: 25px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.boss-bar {
+  border-color: rgba(255, 0, 128, 0.5);
+}
+
+.boss-hp {
+  background: linear-gradient(45deg, #ff0080, #ff4da6);
+  box-shadow: 0 0 10px rgba(255, 0, 128, 0.5);
+}
+
+.vs-boss {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #ff0080;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 0, 128, 0.5);
+  }
+  to {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 0, 128, 0.8);
+  }
+}
+
+.boss-attack-button {
+  background: linear-gradient(45deg, #ff0080, #ff4da6);
+  border: none;
+  padding: 18px 40px;
+  color: white;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.3em;
+  font-weight: bold;
+  display: block;
+  margin: 0 auto 25px auto;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(255, 0, 128, 0.3);
+  flex-shrink: 0;
+}
+
+.boss-attack-button:hover:not(:disabled) {
+  background: linear-gradient(45deg, #e6006b, #ff0080);
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(255, 0, 128, 0.5);
+}
+
+.boss-attack-button:disabled {
+  background: #666;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.dungeon-log {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  padding: 20px;
+  max-height: 200px;
+  overflow-y: auto;
+  flex: 1;
+  border: 2px solid rgba(255, 0, 128, 0.2);
+}
+
+.dungeon-log .log-entry {
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 1em;
+  border-left: 3px solid #ff0080;
+}
+
+.dungeon-log .log-entry:last-child {
+  margin-bottom: 0;
+}
+
+/* Modal mythique */
+.mythic-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(8px);
+}
+
+.mythic-modal {
+  background: linear-gradient(135deg, #1a0d2e, #2d1b4e);
+  border-radius: 20px;
+  box-shadow: 0 30px 80px rgba(255, 0, 128, 0.6);
+  border: 3px solid #ff0080;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow: hidden;
+  animation: mythic-appear 0.5s ease-out;
+}
+
+@keyframes mythic-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.5) rotate(10deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.mythic-header {
+  background: linear-gradient(45deg, #ff0080, #ff4da6);
+  padding: 25px;
+  text-align: center;
+}
+
+.mythic-header h2 {
+  margin: 0;
+  color: white;
+  font-size: 2em;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  50% {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.8);
+  }
+}
+
+.mythic-item-display {
+  padding: 30px;
+  text-align: center;
+}
+
+.mythic-item-icon {
+  font-size: 5em;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 15px rgba(255, 0, 128, 0.7));
+}
+
+.mythic-item-display h3 {
+  margin: 0 0 25px 0;
+  font-size: 1.8em;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.mythic-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.mythic-stat {
+  background: rgba(255, 0, 128, 0.1);
+  border: 2px solid rgba(255, 0, 128, 0.3);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mythic-stat .stat-name {
+  text-transform: capitalize;
+  font-weight: bold;
+}
+
+.mythic-stat .stat-value {
+  font-weight: bold;
+  color: #00ff88;
+  font-size: 1.1em;
+}
+
+.mythic-value {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #ffd700;
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.close-mythic-button {
+  background: linear-gradient(45deg, #00ff88, #4caf50);
+  border: none;
+  padding: 18px 30px;
+  color: white;
+  font-size: 1.2em;
+  font-weight: bold;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.close-mythic-button:hover {
+  background: linear-gradient(45deg, #00e67a, #00ff88);
+  transform: scale(1.02);
+}
+
+/* Mode Vagues */
+.wave-mode-section {
+  background: rgba(0, 150, 255, 0.1);
+  border: 2px solid rgba(0, 150, 255, 0.3);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.wave-mode-section h3 {
+  margin: 0 0 10px 0;
+  color: #00aaff;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+}
+
+.wave-mode-section p {
+  text-align: center;
+  color: #b0d4ff;
+  margin-bottom: 15px;
+  font-style: italic;
+}
+
+.wave-info {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 15px;
+}
+
+.wave-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.9em;
+  color: #fff;
+}
+
+.wave-stats span {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 5px 10px;
+  border-radius: 15px;
+  backdrop-filter: blur(5px);
+}
+
+.wave-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.wave-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00aaff, #0088cc);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+}
+
+.wave-controls {
+  text-align: center;
+}
+
+.start-wave-button {
+  background: linear-gradient(45deg, #00aaff, #0088cc);
+  border: none;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 170, 255, 0.3);
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.start-wave-button:hover {
+  background: linear-gradient(45deg, #0088cc, #006699);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 170, 255, 0.4);
+}
+
+.start-wave-button:disabled {
+  background: #666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.stop-wave-button {
+  background: linear-gradient(45deg, #ff4444, #cc3333);
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 0.9em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+}
+
+.stop-wave-button:hover {
+  background: linear-gradient(45deg, #cc3333, #aa2222);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 68, 68, 0.4);
+}
+
+/* Onglet Forge - Invocations & Capacités */
+.forge-tab-content {
+  padding: 15px;
+  overflow-y: auto;
+}
+
+.forge-tab-content h3 {
+  text-align: center;
+  color: #00d4ff;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+.companions-section,
+.passives-section {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.companions-section h4,
+.passives-section h4 {
+  color: #ff6b35;
+  margin: 0 0 10px 0;
+  font-size: 1.3em;
+  text-align: center;
+}
+
+.companions-section p,
+.passives-section p {
+  text-align: center;
+  color: #ccc;
+  margin-bottom: 15px;
+  font-style: italic;
+}
+
+/* Grilles des compagnons et passifs */
+.companions-grid,
+.passives-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.companion-card,
+.passive-card {
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 15px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.companion-card:hover,
+.passive-card:hover {
+  border-color: #ff6b35;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+}
+
+.passive-card.owned {
+  border-color: #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.companion-info,
+.passive-info {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.companion-emoji,
+.passive-emoji {
+  font-size: 2.5em;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.companion-details,
+.passive-details {
+  flex: 1;
+}
+
+.companion-details strong,
+.passive-details strong {
+  display: block;
+  color: #fff;
+  font-size: 1.1em;
+  margin-bottom: 5px;
+}
+
+.companion-rarity {
+  color: #9c27b0;
+  font-weight: bold;
+  font-size: 0.9em;
+  margin-bottom: 5px;
+}
+
+.passive-type {
+  color: #2196f3;
+  font-weight: bold;
+  font-size: 0.9em;
+  margin-bottom: 5px;
+}
+
+.companion-ability,
+.passive-description {
+  color: #ccc;
+  font-size: 0.9em;
+  margin: 5px 0;
+  font-style: italic;
+}
+
+.companion-cost,
+.passive-cost {
+  color: #ffc107;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.summon-button,
+.learn-button {
+  background: linear-gradient(45deg, #9c27b0, #e91e63);
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.summon-button:hover,
+.learn-button:hover {
+  background: linear-gradient(45deg, #7b1fa2, #c2185b);
+  transform: scale(1.02);
+}
+
+.summon-button:disabled,
+.learn-button:disabled {
+  background: #666;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Listes des compagnons et passifs possédés */
+.owned-companions,
+.learned-passives {
+  margin-top: 20px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.owned-companions h5,
+.learned-passives h5 {
+  color: #4caf50;
+  margin: 0 0 15px 0;
+  text-align: center;
+}
+
+.companions-list,
+.passives-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.owned-companion-card,
+.learned-passive-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.owned-companion-card .companion-emoji,
+.learned-passive-card .passive-emoji {
+  font-size: 2em;
+  margin: 0;
+}
+
+.owned-companion-card .companion-info,
+.learned-passive-card .passive-info {
+  flex: 1;
+  margin: 0;
+}
+
+.owned-companion-card .companion-info strong,
+.learned-passive-card .passive-info strong {
+  margin: 0;
+  font-size: 1em;
+}
+
+.owned-companion-card .companion-info div,
+.learned-passive-card .passive-info div {
+  font-size: 0.9em;
+  color: #ccc;
+  margin-top: 2px;
+}
+
+.activate-button {
+  background: linear-gradient(45deg, #2196f3, #03a9f4);
+  border: none;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.activate-button:hover {
+  background: linear-gradient(45deg, #1976d2, #0288d1);
+  transform: scale(1.05);
+}
+
+.activate-button.active {
+  background: linear-gradient(45deg, #4caf50, #66bb6a);
+  cursor: default;
+}
+
+.activate-button:disabled {
+  background: #666;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.passive-status {
+  color: #4caf50;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .combat-display {
@@ -289,5 +1079,76 @@
 
   .combat-character {
     font-size: 3em;
+  }
+
+  .combat-tab {
+    padding: 12px 15px;
+    font-size: 1em;
+  }
+
+  /* Responsive pour le donjon */
+  .battle-display {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .vs-boss {
+    transform: rotate(90deg);
+    margin: 10px 0;
+  }
+
+  .bosses-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .battle-character {
+    font-size: 3em;
+  }
+
+  .mythic-modal {
+    width: 95%;
+  }
+
+  .mythic-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .boss-attack-button {
+    padding: 15px 30px;
+    font-size: 1.1em;
+  }
+
+  /* Responsive pour mode vagues */
+  .wave-stats {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .wave-stats span {
+    font-size: 0.8em;
+    padding: 4px 8px;
+  }
+  
+  .start-wave-button {
+    padding: 10px 20px;
+    font-size: 0.9em;
+  }
+
+  .companions-grid, .passives-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .companion-emoji, .passive-emoji {
+    font-size: 1.5em;
+  }
+  
+  .owned-companion-card, .learned-passive-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .activate-button, .passive-status {
+    margin-left: 0;
+    margin-top: 10px;
   }
 }
